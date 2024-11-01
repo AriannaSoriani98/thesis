@@ -1,0 +1,1743 @@
+\documentclass[12pt,a4paper,openright,twoside]{book}
+\usepackage[utf8]{inputenc}
+\usepackage{float}
+\usepackage{disi-thesis}
+\usepackage{code-lstlistings}
+\usepackage{notes}
+\usepackage{shortcuts}
+\usepackage{acronym}
+\hypersetup{
+    hidelinks % Nasconde i cerchiati attorno ai link
+}
+
+
+\school{\unibo}
+\programme{Corso di Laurea Magistrale in Ingegneria e Scienze Informatiche}
+\title{Human Identification \& Recognition from X-Ray Dental Images\\
+    \large for forensic applications
+}
+\author{Arianna Soriani}
+\date{\today}
+\subject{Visione Artificiale}
+\supervisor{Prof.ssa Annalisa Franco}
+\cosupervisor{Prof. Guido Borghi}
+\session{III}
+\academicyear{2023-2024}
+
+% Definition of acronyms
+%\acrodef{IoT}{Internet of Thing}
+%\acrodef{vm}[VM]{Virtual Machine}
+
+
+\mainlinespacing{1.241} % line spacing in mainmatter, comment to default (1)
+
+\begin{document}
+
+\frontmatter\frontispiece
+
+\begin{abstract}	
+Il progetto presentato nasce da una stretta collaborazione tra il Dipartimento di {\itshape Ingegneria e Scienze Informatiche} di Cesena e il Dipartimento dei {\itshape Beni Culturali} di Ravenna, in risposta alla necessità di sviluppare strumenti avanzati per l'analisi forense.\\
+
+L’obiettivo del progetto consiste nello sviluppare un sistema che agevoli l’ identificazione di resti scheletrici attraverso l’{\itshape odontologia forense}, disciplina che sfrutta l’impronta dentale come metodo di riconoscimento.\\
+
+I denti rappresentano uno tra i tessuti più resistenti e invarianti nel tempo; forniscono, dunque, un’efficace chiave identificativa, paragonabile, o persino superiore, ad altri metodi di riconoscimento, quali impronte digitali e DNA.\\
+
+Il sistema progettato utilizza tecniche avanzate di elaborazione delle immagini al fine di reallizare una soluzione intelligente che confronti immagini radiografiche dentali acquisite al momento dell'analisi, con immagini preesistenti, memorizzate all'interno di un dataset odontologico.\\
+
+Il progetto si pone l'obiettivo di realizzare una soluzione che fornisca ai ricercatori di Ravenna uno strumento intelligente e rapido per identificare scheletri, ampliando ed accelerando il processo di identificazione di resti, appartenenti ad epoche passate.
+\end{abstract}
+
+\begin{dedication} % this is optional
+Optional. Max a few lines.
+\end{dedication}
+
+%----------------------------------------------------------------------------------------
+\tableofcontents   
+\listoffigures     % (optional) comment if empty
+\lstlistoflistings % (optional) comment if empty
+%----------------------------------------------------------------------------------------
+
+\mainmatter
+
+%----------------------------------------------------------------------------------------
+\chapter{Introduzione}
+\label{chap:introduction}
+%----------------------------------------------------------------------------------------
+
+Il progetto nasce da una stretta collaborazione tra il {\itshape Dipartimento di Ingegneria e Scienze Informatiche} di Cesena e il {\itshape Dipartimento dei Beni Culturali} di Ravenna. Questa iniziativa risponde a una specifica necessità del gruppo di ricerca interno al Dipartimento di Ravenna per applicazioni di analisi forense.\\
+
+Insieme a metodi consolidati come {\itshape impronte digitali} e {\itshape Dna}, i denti rappresentano uno strumento fondamentale per l'identificazione personale; infatti, ill’impronta dentale può risultare tanto efficace, se non più, di altri mezzi di riconoscimento.\\
+
+Il termine {\itshape Odontologia forense} comprende tutte le attività di antropologia forense peculiari dell’odontoiatria e trova applicazioni in vari ambiti, tra cui assume particolare rilevanza quello dell' {\itshape identificazione personale}. L’odontologo forense, avvalendosi della documentazione ante-mortem, può ottenere risultati di elevata precisione.\\
+
+I denti cosituiscono, infatti, il tessuto più resistente dell’organismo umano e mantengono la loro morfologia invariata, eccetto in casi di usura, decalcificazione o fratture. Per questo motivo, l’odontologia forense assume una particolare importanza nel contesto dell’identificazione di resti scheletrizzati o in stato di decomposizione avanzata.\\
+
+Il Dipartimento dei Beni Culturali di Ravenna, in via sperimentale, conduce indagini su resti di corpi umani appartenenti a epoche storiche di cui rimangono solo pochi reperti scheletrici, con l’obiettivo primario di identificarli. La collaborazione con il Dipartimento di Ingegneria e Scienze Informatiche di Cesena è finalizzata proprio allo sviluppo di strumenti idonei a supportare tali attività.\\
+
+L'obiettivo del progetto è, dunque, realizzare un sistema avanzato che consenta ai ricercatori di Ravenna di identificare, in modo efficiente e intelligente, resti scheletrici tramite l'impronta dentale. Il sistema sarà in grado di confrontare immagini radiografiche dentali acquisite durante l’analisi con immagini presenti in un dataset specifico contenente documentazione odontologica preesistente, agevolando, facilitando e accelerando così il processo di identificazione.
+
+%\sidenote{Add sidenotes in this way. They are named after the author of the thesis}
+
+\chapter{Analisi dei dati}
+
+\section{Struttura del dataset}
+Il {\itshape Dipartimento dei Beni Culturali} di Ravenna, dalla cui collaborazione è nata l'idea del progetto, ha fornito, in forma totalmente anonima, un dataset contenente le immagini radiografiche da loro possedute; ogni radiografia si riferisce ad un corpo finalizzato allo studio di analisi forense. \\
+Il dataset fornito contiene immagini relative a 100 pazienti anonimi.\\
+Il {\itshape dataset}, per come è stato fornito, è suddiviso in subdirectory, ciascuna contenente la documentazione relativa ad un singolo paziente. Le singole persone sono identificate attraverso un valore intero crescente (es. "P\_5"). \\
+Ogni subdirectory presenta la medesima struttura: 
+\begin{itemize}
+\item Nome subdirectory: {\itshape P\_idNumber}
+\item 4 immagini radiografiche
+\end{itemize}
+%\begin{figure}
+  %  \centering
+   % \includegraphics[width=.8\linewidth]{figures/random-image.pdf}
+   % \caption{Some random image}
+   % \label{fig:random-image}
+%\end{figure}
+\newpage
+\begin{figure}[H]
+    \centering
+    \includegraphics[height=7cm,width=5cm]{figures/subdir.pdf}
+    \caption{Subdirectory}
+    \label{fig:subdirectory}
+\end{figure}
+
+Il formato desiderato per ogni immagine contenuta, è il seguente:
+\begin{itemize}
+\item \textbf{OTP\_idNumber}: radiografia ortopanoramica
+\item \textbf{FRONTAL\_idNumber}: radiografia bitewing, frontale
+\item \textbf{BTW SX\_idNumber}: radiografia bitewing, della porzione sinistra dell' ortopanoramica
+\item \textbf{BTW DX\_idNumber}: radiografia bitewing, della porzione destra dell' ortopanoramica
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=8cm]{figures/opt.pdf}
+    \caption{Ortopanoramica}
+    \label{fig:opt}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.3\textwidth}
+	\centering
+    	\includegraphics[height=4cm,width=3cm]{figures/FRONTAL.pdf}
+    	\caption{Bitewing frontale}
+    	\label{lab:Bitewing frontale}
+    \end{minipage}\hfill
+    \begin{minipage}{0.3\textwidth}
+    	\centering
+    	\includegraphics[height=4cm,width=3cm]{figures/BTWSX.pdf}
+    	\caption{Bitewing sinistro}
+    	\label{lab:Bitewing sinistro}
+    \end{minipage}\hfill
+    \begin{minipage}{0.3\textwidth}
+    	\centering
+    	\includegraphics[height=4cm,width=3cm]{figures/BTWDX.pdf}
+    	\caption{Bitewing destro}
+   	\label{lab:Bitewing destro}
+    \end{minipage}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Studio preliminare}
+Da un primo studio del dataset emerge immediatamente la non uniformità dei dati. Molte immagini, infatti, non ottemperano al pattern di struttura definito nella sezione precedente. I dati, così presentati, non sono sfruttabili per applicazioni intelligenti di Visioni Artificiale.\\
+Perciò, in un primo studio iniziale sono state mantenute {\itshape solo} le subdirectory le cui immagini risultassero conformi alla struttura.\\
+
+\subsection{Suddivisione del dataset}
+Il dataset utilizzato, quindi, in una prima fase, è un sottoinsieme dell'insieme di partenza; composto unicamente dal range di pazienti 61-100. Infatti, solo questi pazienti presentava ad una prima analisi, un formato comune di dati. I dati, infatti, risalgono a periodi di acquisizione e a modalità diverse; solo per questo sottoinsieme si poteva garantire una nomenclatura corretta alle immagini e un dato pulito in termini di: luminosità, distorsione, rotazione, prospettiva, dimensione e proporzione.
+
+\subsection{Idea}
+L'idea per realizzare uno studio preliminare sui dati, è quella di implementare algoritmi di \textbf{Feature Detection and Matching}.\\
+L'algoritmo così implementato effettua i seguenti passaggi:
+\begin{enumerate}
+\item Estrazione dei \textbf{keypoint} dalle immagini ortopanoramiche (OPT).
+\item Estrazione dei \textbf{keypoint} dalle immagini parziali di bitewing (FRONTAL e BTW).
+\item Matching tra i due punti precedenti al fine dell'identificazione.
+\end{enumerate}
+
+\section{Tipologie di Matching}
+\textbf{Feature Detection e Matching} è un task molto importante di molte applicazioni di computer vision, come structure-from-motion, image retrieval, object detection, e molto altro; è una tecnica fondamentale della computer vision che prevede l'identificazione e l'allineamento di feature corrispondenti in più immagini.\\
+Le \textbf{feature} si riferiscono a elementi distintivi di un'immagine, come bordi, angoli o blob, che possono essere rilevati e descritti in modo consistente. Attraverso il matching tra feature appartenenti a immagini distinte, i sistemi di computer vision sono in grado di riconoscere oggetti, tracciare movimenti, creare immagini panoramiche e ricostruire scene 3D da immagini 2D.\\
+
+Gli aspetti chiave del Feature Matching sono:
+\begin{enumerate}
+
+\item \textbf{Feature Detection}\\
+Il processo inizia con il rilevamento delle key features in ogni immagine. Queste feature sono tipicamente punti di interesse facili da distinguere, come angoli o bordi. Esistono diversi  sistemi di detection molto avanzati, come {\itshape Harris Corner Detector} o {\itshape Laplacian of Gaussian for blob detection}.
+
+\item \textbf{Feature Description}\\
+Una volta che le features sono individuate, esse vengono descritte attraverso dei \textbf{feature descriptors}, i quali forniscono  una rappresentazione numerica delle caratteristiche della feature. I descrittori più diffusi sono {\itshape SIFT} (Scale-Invariant Feature Transform), {\itshape SURF} (Speeded Up Robust Features), ORB (Oriented FAST and Rotated BRIEF) e {\itshape BRIEF} (Binary Robust Independent Elementary Features).
+
+\item \textbf{Feature Matching}\\
+Lo step core consiste nel confrontare i descrittori di feature, appartenenti a immagini diverse, al fine di individuare le corrispondenze. \\
+Vengono comunemente utilizzate tecniche come: {\itshape brute-force matching}, in cui ogni feature viene confrontata con tutte le feature dell'altra immagine, o il  {\itshape K-Nearest Neighbors (KNN) matching}, in cui vengono identificate le corrispondenze più vicine.\\
+Metodi di matching più robusti, quali {\itshape RANSAC} (Random Sample Consensus) aiutano a ridurre il rumore e la presenza di outlier, al fine di migliorare l'accuracy del sistema.
+
+\end{enumerate}
+
+\subsection{Feature Description}
+L'operazione di {\itshape feature description} è uno step cruciale nel processo di feature matching, dove le feature individuate vengono rappresentate in una modalità tale da consentirne il confronto e il match rispetto a immagini differenti. I descrittori di feature forniscono una rappresentazione numerica o simbolica delle caratteristiche delle features, consentendo un'efficace identificazione e allineamento tra feature corrispondenti.\\
+I feature descriptors catturano l'aspetto locale intorno a una feature, in maniera invariante rispetto a diverse operazioni di trasformazione, quali la scala, la rotazione o i cambiamenti di illuminazione.\\
+Essi trasformano i valori dei pixel in prossimità della feature in un vettore compatto e di lunghezza definita che identifica in maniera univoca la feature.\\
+Questo vettore può essere, poi, utilizzato per confrontare e abbinare le feature tra le diverse immagini.\\
+I feature Descriptors più conosciuti e utilizzati sono:
+\begin{enumerate}
+
+\item \textbf{SIFT (Scale-Invariant Feature Transform)}\\
+SIFT genera un descrittore indipendente dalla scala e dalla rotazione; si occupa di identificare i keypoint dell'immagine a varie scale e orientamenti. Ogni keypoint è descritto da un vettore di 128 dimensioni che cattura la distribuzione dell'orientamento del gradiente intorno al keypoint.
+
+\item \textbf{SURF (Speeded Up Robust Features)}\\
+SURF è un'alternativa efficiente a SIFT, che utilizza un'immagine integrale per un calcolo più veloce dei vettori. Produce un descrittore robusto alla scala e alla rotazione, ma può essere calcolato più rapidamente di SIFT.
+
+\item \textbf{ORB (Oriented FAST and Rotated BRIEF)}\\
+ORB combina il keypoint detector FAST con il descrittore BRIEF. Fornisce un descrittore binario che risulta efficiente da calcolare e da abbinare, il chè lo rende adatto ad ambienti con risorse limitate. ORB include anche l'invarianza di orientamento, calcolando l'orientamento di ciascun keypoint.
+
+\item \textbf{BRIEF (Binary Robust Independent Elementary Features)}\\
+BRIEF genera una stringa binaria confrontando le intensità di coppie di pixel intorno a un keypoint. È molto efficiente sia in termini di calcolo che in termini di memorizzazione, ma manca di robustezza ai cambiamenti di scala e di rotazione.
+\end{enumerate}
+
+\subsection{Feature Matching}
+L'operazione di {\itshape feature matching} comporta il confronto dei descrittori di feature allo scopo di individuare feature corrispondenti in immagini diverse. \\
+Per garantire una corrispondenza accurata ed efficiente, vengono impiegate diverse tecniche, tra cui:
+
+\begin{enumerate}
+
+\item \textbf{Keypoint Matching}\\
+Il Keypoint Matching è il processo di ricerca dei keypoint corrispondenti, tra immagini diverse, attraverso il confronto dei loro descrittori. L'obiettivo è identificare coppie di punti chiave che rappresentano lo stesso punto fisico nella scena.
+
+\item \textbf{Brute-Force Matcher}\\
+Il Brute-Force Matcher confronta ogni descrittore di un'immagine con ogni descrittore di un'altra immagine per trovare le migliori corrispondenze in base a una metrica di distanza scelta (ad esempio, la distanza euclidea).
+\begin{itemize}
+\item {\itshape Vantaggi}: Semplice e diretto, fornisce corrispondenze accurate.
+\item {\itshape Svantaggi}: Costoso dal punto di vista computazionale, soprattutto per grandi insiemi di dati.
+\end{itemize}
+
+\item \textbf{K-Nearest Neighbors (KNN) Matching}
+Il K-Nearest Neighbors Matching trova i k descrittori più vicini per ogni keypoint in base ad una metrica di distanza. In genere, si applica il \textbf{ratio test} per selezionare la migliore corrispondenza tra i k vicini.
+\begin{itemize}
+\item {\itshape Vantaggi}: Più efficiente della corrispondenza brute-force, consente una certa flessibilità nella selezione della corrispondenza migliore.
+\item {\itshape Svantaggi}: Ancora intensivo dal punto di vista computazionale per insiemi di dati molto grandi.
+\end{itemize}
+
+\item \textbf{ RANSAC (Random Sample Consensus)} per Robust Matching\\
+RANSAC è un metodo iterativo utilizzato per stimare i parametri di un modello matematico da un insieme di dati osservati che contengono outlier. Nel feature matching, RANSAC viene utilizzato per trovare un insieme robusto di corrispondenze selezionando ripetutamente sottoinsiemi casuali di corrispondenze e calcolando una trasformazione che allinei le immagini. Viene scelta la trasformazione con il maggior numero di valori anomali.
+
+\begin{itemize}
+\item {\itshape Vantaggi}: Robustezza agli outlier e al rumore, migliora l'accuratezza del feature matching.
+\item {\itshape Svantaggi}:  Intenso dal punto di vista computazionale, richiede un'attenta regolazione dei parametri.
+\end{itemize}
+
+\end{enumerate}
+
+\subsection{Template Matching}
+Un ulteriore studio che è stato effettuato è attraverso un altro metodo di Matching molto conosciuto, denominato \textbf{Template Matching}.\\
+Template Matching è una tecnica di alto livello, utilizzata in applicazioni di computer vision, che permette di individuare la posizione o le posizioni di un certo template fornito come immagine, all'interno di un'altra immagine più grande.\\
+Esisttono diversi algoritmi di template matching avanzati che permettono di individuare le occorrenze del template indipendentemente dall'orientazione o dalla luminosità locale.\\
+Le tecniche di Template Matching sono flessibili e relativamente semplici da usare, il chè le rende uno dei metodi più popolari nei compiti di Object Detection.\\
+La loro applicabilità è limitata soprattutto dalla potenza di calcolo disponibile, poiché l'identificazione di modelli grandi e complessi può richiedere molto tempo.\\
+L'obiettivo, dunque, di questo modello è quello di individuare tutte le occorrenze e posizioni di un'immagine di riferimento (template) all'interno di un'altra immagine (immagine di input), indipendentemente dalla scala o dalla rotazione.\\
+
+Il modello utilizzato è {\itshape TM\_CCOEFF\_NORMED}, il quale lavora sull'intera immagine di query (OPT) e ricerca le occorrenze dell'immagine di bitewing fornita (BTW o FRONTAL).
+\begin{itemize}
+\item {\itshape Vantaggi}: E' un modello semplice e veloce.
+\item {\itshape Svantaggi}: Molto sensibile alla scala, alla rotazione e ad altre trasformazioni geometriche.
+\end{itemize}
+Essa calcola una matrice di matching come sovrapposizione rispetto all'immagine intera e determina i punti in cui si sovrappone meglio.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+\section{Analisi Preliminare}
+Attraverso un primo studio sul sottoinsieme del dataset di partenza (P61-P100) è stato implementato un sistema di valutazione e di identificazione di immagini. Il processo presenta i seguenti passi:
+\begin{itemize}
+\item Estrazione di keypoint e feature descriptor nelle immagini ortopanoramiche (OPT).
+\item Estrazione di keypoint e feature descriptor nelle immagini parziali di bitewing (BTW e FRONTAL).
+\item Identificazione delle immagini parziali attraverso un meccanismo di matching con le ortopanoramiche.
+\end{itemize}
+Il processo, perciò, può essere così rappresentato:
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[height=6cm,width=16cm]{figures/keypoint.pdf}
+    	\caption{Feature Descriptors e Feature Matching}
+	\label{fig:keypointdescriptor}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[height=6cm,width=11cm]{figures/matchprof.pdf}
+    	\caption{Different Feature Matching}
+	\label{fig:featurematching}
+\end{figure}
+
+\subsection{Protocollo operativo}
+Lo schema di esecuzione seguito si basa sul confronto di una singola immagine di query, immagine di bitewing, con tutte le immagini ortopanoramiche, in questo caso 40.\\
+Ai fini di valutare l'accuratezza del sistema, si sono utilizzati tre metriche, definite come:
+\begin{itemize}
+\item \textbf{Rank@1}: il match corretto è nella prima posizione.
+\item \textbf{Rank@2}: il match corretto è entro le prime due posizioni.
+\item \textbf{Rank@5}: il match corretto è entro le prime cinque posizioni.
+\end{itemize}
+
+\subsection{Risultati ottenuti}
+I risultati ottenuti da questa prima valutazione sono molto buoni, essi infatti presentano dei valori altamente competitivi in termini di accuracy anche a livello di Rank@1.\\
+Per il matching delle immagini di bitewing frontali (FRONTAL), i risultati ottenuti sono i seguenti:
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[height=5cm,width=15cm]{figures/frontalprof.pdf}
+    	\caption{Matching delle immagini Frontal}
+	\label{fig:frontalprof}
+\end{figure}
+
+Nella rappresentazione riportata, si può vedere l'ottimalità dei risultati ottenuti, soprattutto quando si utilizzano keypoint SIFT, i quali, infatti, sono per definizione più precisi. \\
+Anche per il match di immagini di Bitewing laterali, si ottengono risultati molto buoni:
+\begin{figure}[H]
+	\centering
+	\includegraphics[height=5cm,width=15cm]{figures/dxprof.pdf}
+    	\caption{Matching delle immagini BTW DX}
+	\label{fig:dxprof}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[height=5cm,width=15cm]{figures/sxprof.pdf}
+    	\caption{Matching delle immagini BTW SX}
+	\label{fig:sxprof}
+\end{figure}
+
+Per le immagini laterali si può vedere come l'accuratezza decresca a causa del problema intrinseco delle immagini laterali del cambiamento di prospettiva. Alcuni keypoint sono robusti a questo problema, ma un'ulteriore miglioria potrebbe essere apportata definendo dei meccanismi di supporto per interagire con questo tipo di problema. 
+
+\subsection{Tempi di esecuzione}
+I tempi di esecuzione ottenuti dai diversi algoritmi di matching sono i seguenti:
+\begin{figure}[H]
+	\centering
+	\includegraphics[height=5cm,width=8cm]{figures/tempiprof.pdf}
+    	\caption{Tempi di esecuzione}
+	\label{fig:tempiprof}
+\end{figure}
+
+Nonostante la dimensionalità molto bassa del database (solo 40 pazienti) i tempi di esecuzione richiesti non sono propriamente bassi, infatti, soprattutto con il keypoint SIFT è richiesto un tempo di processamento per ogni singolo match di circa 10s.\\
+Feature ORB è il metodo di match con tempi di esecuzione più bassi, ma risultati di match peggiori.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Problemi da affrontare}
+Il progetto così strutturato, presenta diverse limitazioni, tra cui:
+\begin{itemize}
+\item Cardinalità del dataset troppo piccola: solo \textbf{40} immagini.
+\item Immagini "perfette", non rappresentative della realtà.
+\item Analisi effettuata solo attraverso due algoritmi di Feature Matching noti: SIFT e ORB.
+\item Matching tra  immagini ortopanoramiche e di bitewing con rapporto 1:1 .
+\item Feature Matching effettuato sull'intera immagine ortopanoramica.
+\item Nessun raffinamento per il cambiamento di prospettiva per le immagini di Bitewing laterali.
+\item Nessuna valutazione sul cambiamento nel tempo della confrormazione dell'impronta dentale, sistema non robusto.
+\item Dataset  "semplice", non presenta alcun problema di scala
+\end{itemize}
+Dalle conclusioni ottenute dalla prima trattazione del problema è emerso che ogni soluzione proposta, presenta aspetti positivi e aspetti negativi:
+\begin{itemize}
+\item \textbf{ORB}: richiede un tempo di esecuzione minore, ma offre risultati di matching peggiori.
+\item \textbf{Template Match}: richiede un tempo intermedio e offre risultati intermedi.
+\item \textbf{SIFT}: notevolmente più lento, ma offre risultati molto migliori.
+\end{itemize}
+Attraverso questo progetto viene affrontato il problema, allo scopo di realizzare una soluzione il più robusta, generale e applicabile possibile.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Il problema della cardinalità}
+La cardinalità di un dataset, ovvero il numero di elementi unici o distinti presenti, ha un impatto significativo sull'applicabilità degli algoritmi di computer vision. La bassa cardinalità può influenzare vari aspetti, come la capacità del modello di generalizzare, il rischio di overfitting e le prestazioni complessive del sistema.\\
+In particolare: 
+\begin{itemize}
+\item \textbf{Problemi di Overfitting}:\\
+Quando si ha un dataset con bassa cardinalità, si rischia che il modello diventi troppo specifico per i dati di addestramento. Gli algoritmi di deep learning, in particolare, hanno una grande capacità di apprendimento e tendono a sovradimensionare le caratteristiche specifiche del dataset. Questo porta a un problema di {\itshape overfitting}, dove il modello performa molto bene sui dati di addestramento, ma male su dati nuovi o non visti.
+
+\item \textbf{Generalizzazione limitata}:\\
+Con una bassa cardinalità, gli algoritmi di computer vision potrebbero avere difficoltà a generalizzare, poiché il dataset potrebbe non rappresentare sufficientemente la variabilità del mondo reale. Ad esempio, se si dispone di poche immagini per ciascuna classe (nel caso di classificazione), il modello potrebbe non essere in grado di apprendere una rappresentazione robusta per categorie diverse.
+
+\item \textbf{Scelta dell'algoritmo}:\\
+Gli algoritmi di deep learning, come le reti neurali convoluzionali (CNN), richiedono solitamente grandi quantità di dati per poter imparare caratteristiche significative. Se la cardinalità è bassa, questi algoritmi potrebbero non essere ideali, in quantonecessitano di un numero elevato di dati al fine di essere addestrati in maniera efficacie.
+
+\item \textbf{Distorsione statistica}:\\
+Una bassa cardinalità potrebbe anche portare a problemi di distorsioni statistiche, soprattutto se alcune classi o categorie sono molto poco rappresentate rispetto ad altre (squilibrio del dataset). In questo caso, il modello potrebbe essere sbilanciato, favorendo le classi più rappresentate e ignorando quelle meno presenti.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Aumento della cardinalità del dataset}
+Il {\itshape Dipartimento dei Beni Culturali} di Ravenna, dalla cui collaborazione è nata l'idea dello studio, ha fornito, in forma totalmente anonima, il dataset contenente le immagini radiografiche da loro posseduto; ogni radiografia si riferisce ad un corpo di analisi forense. \\
+Il dataset fornito contiene immagini relative a 100 pazienti anonimi. Purtroppo, però, il dataset così presentato non è utilizzabile per uno studio in ambito di Visione Artificiale; gli algoritmi di questa disciplina richiedono formalismi e rigori che i dati nativamente non presentavano.\\
+
+Il primo studio che è stato effettuato su questi dati, ha ristretto l'utilizzo delle immagini solo ai pazienti appartenenti alla sottodirectory {\itshape 61-100} poichè formalizzati secondo la struttura desiderata.\\
+Al fine di realizzare un sistema il più robusto e generico possibile, però, la cardinalità del dataset è incompatibile con la cardinalità richiesta in sistemi di computer vision.\\
+E' fondamentale, perciò, per una corretta realizzazione di un sistema robusto di {\itshape Human Tooth Identification}, accrescere il dataset per aumentarne la complessità, generalizzazione e applicabilità.\\
+I passi presentati di seguito sono stati fondamentali al fine di ottemperare questo obiettivo.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Pre-processing del dataset}
+In prima istanza, è stato perciò indispensabile, al fine di \textbf{accrescere la cardinalità del dataset}, standardizzare le immagini fornite dal dipartimento.\\
+Il primo passo, dunque, è definire la \textbf{struttura} del dataset desiderata.
+\begin{itemize}
+\item La directory principale è suddivisa in n (con n=100) subdirectory.
+\item Ogni subdirectory è denominata {\itshape Pi}, con i numero identificativo del paziente (con i tra 1-100).
+\item All'interno di ogni subdirectory devono essere presenti quattro immagini, nel formato:
+\begin{enumerate}
+\item L'ortopanoramica denominata: {\itshape OPT\_i}, con i numero identificativo della subdirectory di appartenenza. 
+\item L'immagine di bitewing frontale denominata: {\itshape FRONTAL\_i}, con i numero identificativo della subdirectory di appartenenza. 
+\item L'immagine di bitewing laterale destra denominata: {\itshape BTW DX\_i}, con i numero identificativo della subdirectory di appartenenza. 
+\item L'immagine di bitewing laterale sinistra denominata: {\itshape BTW SX\_i}, con i numero identificativo della subdirectory di appartenenza. 
+\end{enumerate}
+\end{itemize}
+Si sottolinea, inoltre, che l'immagine di bitewing laterale destra, rappresenta l'area a destra dell'immagine ortopanoramiche; viceversa, l'immagine di bitewing laterale sinistra, ne rappresenta l'area a sinistra.
+
+A tale scopo perciò, sono state effettuate diverse operazioni di formattazione, tra cui:
+\begin{itemize}
+\item Ridenominazione delle immagini
+\item Suddivisione in subdirectory
+\item Eliminazione di immagini extra
+\item ...
+\end{itemize}
+Queste operazioni sono state supportate da opportuni script python che ne hanno velocizzato notevolmente il processo.\\
+Alcune immagini presentavano, inoltre, diversi errori di prospettiva o rotazione; sono state apportate perciò alcune modifiche attraverso operazioni di:
+\begin{itemize}
+\item Flip orizzontale
+\item Rotazione
+\end{itemize}
+
+Al termine di questa prima elaborazione dei dati, il dataset finale, formalizzato e standardizzato, risulta costituito da 100 persone, ciascuna descritta da 4 immagini radiografiche.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Integrazione di dataset esterni}
+ %solo ortopanoramiche
+ %anche di bitewing 
+%a scale e dimensioni diverse
+Il dataset così ottenuto non ha ugualmente una cardinalità sufficiente per essere utilizzato da algoritmi avanzati di computer vision. \\
+Il problema principale risiede nella fase di matching, durante la quale la ricerca di identità viene effettuata con un mapping 1:1.\\
+Indispensabile, perciò, è aumentare la cardinalità del dataset di ricerca, in questo caso del dataset contenente le immagini ortopanoramiche.\\
+Inoltre, i dati presenti nella directory ottenuta al passo precedente, presenta immagini che potrebbero essere definite "perfette".\\
+La perfezione, in questo caso, si riferisce a due aspetti:
+\begin{itemize}
+\item Qualità dell'immagine.
+\item Struttura del dato rappresentato.
+\end{itemize}
+
+Ogni paziente all'interno di questo dataset, presenta un'arcata dentale pulita e completa. La totalità delle immagini non presenta situazioni critiche nello studio otontologico, quali:
+\begin{itemize}
+\item Mancanza di denti.
+\item Otturazioni.
+\item Apparecchi ortodontici.
+\item ecc.
+\end{itemize}
+
+Sicuramente questo facilita la ricerca e l'applicazione di algoritmi, ma non permette la realizzazione di un sistema generale e di dominio applicativo più ampio. \\
+Inoltre, è molto rilevante considerare la modifica che può partare il tempo ad un'impronta dentale. Le immagini ortopanoramiche registrate nel sistema, potrebbero rappresentare una realtà diversa rispetto a quella catturata nel momento di querying. In generale, le immagini di bitewing dovrebbero riferirsi al momento dello studio di analisi forense; il dataset no. Di conseguenza, potrebbero essere apparse modifiche nel tempo, quali otturazioni, o denti mancanti.\\
+
+Il dataset, non è perciò rappresentativo della realtà.\\
+
+Allo scopo di aumentarne la cardinalità, si sono ricercati in rete dataset più ampi e diversificati, riferiti allo stesso dominio applicativo (con fonti in sitografia).\\
+I dataset individuati presentano le seguenti cardinalità:
+\begin{itemize}
+\item {\itshape A Comprehensive Dental X-ray Dataset for Machine Learning}: 64 immagini.
+\item {\itshape Teeth\_dataset}:250 immagini.
+\item {\itshape Teeth-segmentation-on-dental-x-ray-images}: 598 immagini.
+\item {\itshape Panoramic Dental X-rays}: 116  immagini.
+\item {\itshape Panoramic Dental Xray Dataset}: 202 immagini.
+\item {\itshape Gender Labelled Panoramic Dental X‑ray}: 979 immagini.
+\end{itemize}
+
+Il dataset di immagini ortopanoramiche così ottenuto presenta ben \textbf{2309} immagini.\\
+La complessità, ora, è accresciuta oltre dalla cardinalità del dataset, anche dal polimorfismo dei dati; infatti, con l'introduzione di nuove immagini si sono introdotti casi di immagini non più considerabili "perfette".\\
+Già da una prima osservazione, si può vedere come queste immagini presentino diverse problematiche, tra cui:
+\begin{itemize}
+\item Assenza di denti, a volte anche nella loro totalità.
+\item Presenza di otturazioni.
+\item Presenza di apparecchi ortodontici.
+\item Struttura dell'impronta dentale molto deformata, con presenza di denti plurinumerali e posizionamento dei denti molto anomalo.
+\end{itemize}
+
+Oltre a queste nuove difficoltà, si sono introdotte anche nuove problematiche legate più alla qualità dell'immagine stessa.\\
+
+I nuovi problemi così introdotti, sono:
+\begin{itemize}
+\item Scala dell'immagine molto diversa.
+\item Presenza di regioni sfuocate e mancanza di messa a fuoco.
+\item Sgranatura dovuta alla bassa qualità dell'immagine.
+\item Luminosità troppo alta che abbaglia alcune zone dell'immagine.
+\item Basso contrasto da non permettere di delineare con precisione i confini dei singoli denti.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Data augmentation}
+Allo scopo di realizzare un sistema {\itshape più robusto e generale} è necessario:
+\begin{itemize}
+\item Accrescere la cardinalità del dataset
+\item Aumentare la generalità dei dati
+\end{itemize}
+Da un'attenta analisi sulle immagini di input fornite, evince che alcune di esse sono affette dai seguenti problemi:
+\begin{itemize}
+\item \textbf{Sfocatura}.
+\item \textbf{Basso contrasto}.
+\item \textbf{Distorsione}.
+\end{itemize}
+Questi difetti sono legati alla qualità dell'immagine stessa.\\
+Altri problemi che insorgono da una prima valutazione delle immagini di input, legati invece al contenuto dell'immagine stessa, sono:
+\begin{itemize}
+\item \textbf{Mancanza di denti}.
+\item \textbf{Otturazioni}: individuate da zone a luminosità maggiore.
+\item \textbf{Protesi e interventi ortodontici}.
+\end{itemize}
+Questi problemi non necessitano di essere risolti, viceversa, vanno affrontati e valorizzati poichè più {\itshape rappresentativi della realtà}.\\
+
+Allo scopo di creare un sistema  robusto e, quindi, più\textbf{ampio} e \textbf{generale}, è possibile creare nuove immagini, a partire da quelle di input.\\
+Questo processo è noto come \textbf{Data Augmentation} che si occupa di modificare le immagini di partenza, asserendo nuove caratteristiche e problematiche all'immagine di input, al fine di renderle nuove e diverse da quelle di partenza, aggiungendo, evenutalmente, qualche grado di complessità.\\
+
+L'operazione di \textbf{Data augmentation} è un processo fondamentale nell'ambito della visione artificiale; esso consiste nella generazione di nuovi dati di addestramento attraverso la manipolazione delle immagini esistenti. Questo approccio è ampiamente utilizzato nei processi di Computer Vision, allo scopo di aumentare la quantità e la diversità dei dati disponibili per l'addestramento nei modelli di deep learning, al fine di migliorare la capacità di generalizzazione del sistema, riducendo il rischio di overfitting.\\
+Alcune delle motivazioni che portano all'utilizzo di questa tecnica sono:
+\begin{enumerate}
+\item \textbf{Scarsità dei dati}:
+In molti casi, specialmente in situazioni in cui la raccolta di dati è costosa o difficile, come nel caso delle immagini mediche o della sorveglianza video, potrebbe essere disponibile un numero limitato di dati per l'addestramento di modelli di deep learning. La data augmentation può aiutare a mitigare questo problema generando dati artificiali e aumentando il numero di campioni di addestramento disponibili.
+
+\item \textbf{Generazione di dati diversificati}:
+L'addestramento di modelli di deep learning su un insieme di dati eterogeneo e rappresentativo è essenziale per garantire che il modello sia in grado di generalizzare bene su nuovi dati non visti durante l'addestramento. La data augmentation consente di creare diverse varianti delle immagini originali, esponendo il modello a una maggiore varietà di contesti e condizioni, migliorando così la sua capacità di generalizzazione.
+
+\item \textbf{Miglioramento delle prestazioni del modello}:
+Le tecniche di aumento dei dati aiutano ad arricchire i set di dati creando molte variazioni dei dati esistenti. Ciò fornisce un set di dati più ampio per l'addestramento e consente a un modello di riscontrare funzionalità più diversificate. I dati aumentati aiutano il modello a generalizzarsi meglio ai dati non visti e a migliorare le prestazioni complessive in ambienti reali. 
+
+\item \textbf{Minore dipendenza dai dati}:
+La raccolta e la preparazione di grandi volumi di dati per l'addestramento possono essere costose e dispendiose in termini di tempo. Le tecniche di aumento dei dati aumentano l'efficacia di set di dati più piccoli, riducendo drasticamente la dipendenza da set di dati di grandi dimensioni negli ambienti di addestramento. È possibile utilizzare set di dati più piccoli per integrare il set con punti di dati sintetici.
+
+\item \textbf{Mitigare l'overfitting nei dati di addestramento}:
+L'aumento dei dati aiuta a prevenire l'overfitting durante l'addestramento dei modelli di machine learning. L'overfitting è il comportamento indesiderato del machine learning in cui un modello è in grado di fornire previsioni accurate per l'addestramento dei dati ma ha difficoltà con nuovi dati. Se un modello si addestra solo con un set di dati ristretto, rischia di diventare overfitting e di fornire previsioni correlate soltanto a quel tipo di dati specifici. Al contrario, l'aumento dei dati offre un set di dati molto più ampio e completo per l'addestramento del modello. Rende i set di addestramento unici per le reti neurali profonde, impedendo loro di imparare a lavorare solo con caratteristiche specifiche.
+
+\item \textbf{Miglioramento della privacy dei dati}:
+Se è necessario addestrare un modello di deep learning su dati sensibili, è possibile utilizzare tecniche di aumento sui dati esistenti per creare dati sintetici. Questi dati aumentati mantengono le proprietà statistiche e il peso dei dati di input proteggendo e limitando l'accesso all'originale
+\end{enumerate}
+
+L'aumento dei dati trasforma, edita o modifica i dati esistenti per creare varianti. Il processo è caratterizzato dai seguenti step:
+\begin{enumerate}
+\item \textbf{Esplorazione dei set di dati}:
+La prima fase dell'aumento dei dati consiste nell'analizzare il set di dati esistente e comprenderne le caratteristiche. Funzionalità come la dimensione delle immagini di input o la distribuzione dei dati forniscono un ulteriore contesto per l'aumento. 
+
+È possibile selezionare diverse tecniche di aumento dei dati in base al tipo di dati sottostante e ai risultati desiderati. Ad esempio, l'aumento di un set di dati con molte immagini include l'aggiunta di rumore, il ridimensionamento o il ritaglio. 
+
+\item \textbf{Aumento dei dati esistenti}:
+Dopo aver selezionato la tecnica di aumento dei dati più adatta agli scopi desiderati, è possibile iniziare ad applicarvi diverse trasformazioni. I punti dati o i campioni di immagini nel set di dati si trasformano utilizzando il metodo di aumento selezionato, fornendo una serie di nuovi campioni aumentati. 
+
+Durante il processo di aumento, si mantengono le stesse regole di etichettatura per la coerenza dei dati, garantendo che i dati sintetici includano le stesse etichette corrispondenti ai dati di origine.
+
+\item \textbf{Verifica}:
+In genere, si esaminano le immagini sintetiche per determinare se la trasformazione è andata a buon fine. Questo ulteriore passaggio manuale aiuta a preservare una maggiore qualità dei dati. 
+
+\item \textbf{Integrazione dei moduli di dati}:
+Successivamente, si combinano i nuovi dati aumentati con quelli originali per produrre un set di dati di addestramento più ampio per il modello. Durante l'addestramento del modello, si utilizza questo set di dati composto dalle due tipologie di dati.
+
+È importante notare che i nuovi punti dati creati mediante l'aumento sintetico dei dati hanno gli stessi bias dei dati di input originali. Per evitare che i bias si trasferiscano nei nuovi dati, è necessario \textbf{risolvere quelli nei dati di origine prima di iniziare il processo di aumento dei dati}.
+\end{enumerate}
+
+Per quanto riguarda le possibili operazioni applicabili, esistono diverse tecniche di data augmentation comunemente utilizzate in visione artificiale. Alcuni esempi includono:
+\begin{enumerate}
+\item \textbf{Riflessione orizzontale e verticale (flip)}: Le immagini possono essere riflesse orizzontalmente o verticalmente, creando nuove istanze di dati che sono speculari rispetto all'originale. Questa tecnica è utile per affrontare la simmetria nei dati e può essere applicata a molte categorie di immagini.
+
+\item \textbf{Rotazione}: Le immagini possono essere ruotate di un certo angolo (ad esempio, ±10 gradi) in senso orario o antiorario. Questo aiuta a migliorare la robustezza del modello alle variazioni di orientamento nelle immagini.
+
+\item \textbf{Zoom e cropping}: Le immagini possono essere zoomate in avanti o all'indietro, oppure possono essere ritagliate in diverse regioni dell'immagine originale. Questo può aiutare a gestire la variazione di scala e a concentrare l'attenzione su diverse parti dell'immagine.
+
+\item \textbf{Traslazione}: Le immagini possono essere spostate orizzontalmente e verticalmente all'interno del loro spazio, creando nuove istanze di dati che rappresentano lo stesso oggetto in diverse posizioni all'interno dell'immagine.
+
+\item \textbf{Regolazione della luminosità e del contrasto}: La luminosità e il contrasto delle immagini possono essere regolati in modo da simulare diverse condizioni di illuminazione. Questo aiuta a rendere il modello più robusto alle variazioni nelle condizioni di illuminazione.
+
+\item \textbf{Aggiunta di rumore}: Può essere aggiunto del rumore alle immagini per simulare varie imperfezioni o distorsioni che possono essere presenti nei dati del mondo reale.
+\end{enumerate}
+
+E' però molto importante valutare e selezionare accuratamente le operazioni da applicare ai dati originali per mantenere coerenza e integrità del dataset. Infatti è opportuno effettuare alcune considerazioni su:
+\begin{itemize}
+\item \textbf{Bilanciamento}: È importante bilanciare le tecniche di data augmentation in modo da non introdurre distorsioni indesiderate nei dati. Ad esempio, la rotazione di immagini mediche potrebbe non essere appropriata se le direzioni anatomiche devono essere preservate.
+
+\item \textbf{Valutazione dell'impatto}: È necessario valutare l'impatto delle tecniche di data augmentation sull'addestramento e sulle prestazioni del modello. A volte, tecniche troppo aggressive possono danneggiare le prestazioni del modello anziché migliorarle.
+
+\item \textbf{Consistenza}: È importante applicare le stesse trasformazioni di data augmentation durante l'addestramento, la convalida e il test del modello per garantire la coerenza e l'equità nell'analisi delle prestazioni.
+\end{itemize}
+
+A seguito di queste considerazioni, operazioni che possono modificare la definizione dell'immagine devono essere assolutamente evitate.\\
+Ad esempio, l'utilizzo del {\itshape flip} orizzontale, potrebbe modificare la direzionalità dei denti creando delle modifiche morfologiche alla radiografia, modificando l'apprendimento in maniera errata. Operazioni come queste, non devono essere applicate.\\
+
+Questa tecnica verrà presentata nel seguito e utilizzata per manipolare le immagini ortopanoramiche al fine di aggiungere compplessità all'immagine stessa. Come anticipato, uno degli obiettivi finali del progetto è quello di realizzare un sistema robusto a deterioramenti e modifiche che possono avvenire nel tempo. Questo a fronte del fatto che la cattura di immagini parziali avviene in momenti presumibilmente diversi rispetto a quelli in cui sono avvenute le registrazioni delle immagini ortopanoramiche di riferimento.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Implementazione algoritmi}
+Dai risultati emersi dall'analisi preliminare, è emerso che gli algoritmi di matching più adatti a questo tipo di valutazione sono quelli di \textbf{Feature Matching}.\\
+In particolare, sono state realizzate due soluzioni: \textbf{SIFT} e \textbf{ORB}.\\
+
+\begin{enumerate}
+\item \textbf{SIFT}\\
+L'algoritmo realizzato può essere scomposto in diverse fasi di computazione. Di seguito, una spiegazione dettagliata dei passi più rilevanti.
+\begin{enumerate}
+
+\item \textbf{STEP 1: Inizializzazione di SIFT}\\
+Inizializzazione dell'oggetto SIFT tramite OpenCV. SIFT è un algoritmo che rileva i punti di interesse (keypoints) e ne calcola le descrizioni (descriptors), robusti rispetto a variazioni di scala e rotazione.\\
+
+{\itshape sift = cv2.SIFT\_create()}\\
+
+\item \textbf{STEP 2: Rilevamento di keypoints e descriptors}\\
+Viene letta l'immagine in scala di grigi. Si applica SIFT al fine di rilevare i keypoints  e calcolare i descriptors, ovvero vettori che rappresentano le caratteristiche locali intorno ai keypoints. Infine, vengono restituiti l'immagine, i keypoints, e i descriptors.\\
+
+{\itshape keypoints, descriptors = sift.detectAndCompute(img, None)}\\
+
+\item \textbf{STEP 3: Estrazione delle feature per un dataset di immagini}\\
+Processo iterativo del punto precedente sull'intero dataset.
+
+\item \textbf{STEP 4: Confronto delle immagini tramite matcher}\\
+
+\begin{figure}[H]
+    \centering
+    \lstinputlisting[language=Python,label={lst:siftmatching}]{listings/flann.py}
+\end{figure}
+
+La funzione confronta i descrittori tra due immagini usando il metodo \textbf{FLANN} (Fast Library for Approximate Nearest Neighbors).\\
+Viene applicato un \textbf{ratio test} per filtrare i match migliori, ovvero vengono accettati solo i match in cui la distanza del primo match è molto più bassa rispetto al secondo (0.75 di default).\\
+Restituisce i match migliori, che indicano le somiglianze tra due immagini.\\
+FLANN è una libreria usata per la ricerca approssimata dei vicini più prossimi, particolarmente utile quando si lavora con set di dati di grandi dimensioni o con descrittori ad alta dimensionalità, come quelli generati da algoritmi di computer vision come SIFT o SURF.\\
+FLANN non cerca necessariamente la corrispondenza esatta, ma restituisce risultati approssimati con grande efficienza, rendendolo particolarmente utile in scenari di ricerca ad alte prestazioni.\\
+FLANN  è spesso scelto con SIFT per la ricerca dei vicini più prossimi nei descrittori, poichè SIFT produce descrittori continui ad alta dimensionalità (128 dimensioni), e FLANN è ottimizzato per gestire questo tipo di dati. Ma più nel dettaglio i benefici che porta nell'utilizzo con SIFT sono:
+\begin{itemize}
+\item Efficienza con grandi dataset:\\
+I descrittori SIFT sono vettori a 128 dimensioni, e se si lavora con un elevato numero di immagini, il numero totale di descrittori può essere enorme. Confrontare ogni descrittore con tutti gli altri in modo esatto sarebbe computazionalmente costoso.\\
+FLANN utilizza tecniche di indicizzazione come K-D Tree o LSH (Locality-Sensitive Hashing), che riducono il tempo di ricerca permettendo la ricerca di corrispondenze approssimate, ma molto veloci.
+\item Descrittori continui:\\
+I descrittori SIFT non sono valori binari (come quelli di ORB), ma sono numeri reali continui. Questo tipo di dati è più adatto ad algoritmi che trattano questo tipo di dati, come FLANN con K-D Tree.\\
+Al contrario, il BFMatcher è un algoritmo di forza bruta che confronta direttamente ogni descrittore di un'immagine con ogni descrittore dell'altra immagine. Anche se è preciso, è inefficiente per descrittori ad alta dimensionalità come quelli di SIFT.
+\item Approssimazione rapida e precisa:\\
+FLANN, pur essendo approssimato, offre un compromesso eccellente tra precisione e velocità, il che lo rende ideale quando si cerca un gran numero di corrispondenze in tempi brevi. Per scenari dove il tempo è cruciale (come la computer vision in tempo reale), FLANN può essere molto più rapido del confronto esatto di BFMatcher.
+\item Scalabilità:\\
+FLANN è scalabile, il che significa che funziona bene anche quando si aumenta il numero di descrittori e immagini nel dataset. La sua indicizzazione consente di eseguire query sui dati in modo più efficiente rispetto a un approccio brute-force.
+\item Supporto nativo in OpenCV: \\
+FLANN è integrato direttamente in OpenCV, e le sue API sono facili da usare. È progettato per sfruttare al meglio i descrittori continui come quelli di SIFT e SURF.
+\end{itemize}
+
+\item \textbf{STEP 5: Ricerca dei migliori match tra immagini}\\
+Per ogni immagine di query, si calcolano i valori match, intesi come il numero intero di match corrispondenti, individuati durante la ricerca sul dataset di immagini ortopanoraiche.\\
+Viene resituita una lista delle immagini meglio corrispondenti, ordinata in base al numero di match migliori.
+
+\item \textbf{STEP 6: Valutazione dell'accuratezza del matching}\\
+Questa funzione valuta l'accuratezza del sistema di matching tra immagini di query e quelle ortopanoramiche.\\
+Ovviamente come ogni algoritmo di computer vision, necessita di un sistema di valutazione delle prestazioni al fine di valutarne l'applicabilità al dato problema.\\
+Come precedentemente anticipato, vengono riportate tre misure relative all'\textbf{accuracy} del sistema di computer vision: \textbf{Rank@1},  \textbf{Rank@3},  \textbf{Rank@5}. Viene incrementato il valore corrispondente se l'immagine corretta di matching viene individuata rispettivamente in prima posizione o entro le prime 3 o 5 posizioni.
+
+\end{enumerate}
+\item \textbf{ORB}\\
+ORB (Oriented FAST and Rotated BRIEF) è un algoritmo di rilevamento e descrizione di feature che combina l'efficienza di FAST (Features from Accelerated Segment Test) per il rilevamento di keypoints e BRIEF (Binary Robust Independent Elementary Features) per la descrizione delle caratteristiche. ORB è una versione ottimizzata e più rapida per scenari in tempo reale rispetto a SIFT e SURF.
+\begin{itemize}
+\item ORB usa FAST per rilevare i keypoints. FAST è un algoritmo molto veloce che rileva punti d'interesse cercando regioni in cui il contrasto tra un pixel centrale e i pixel circostanti è significativo.
+\item ORB migliora FAST rendendolo orientato: i keypoints vengono assegnati con una direzione dominante, rendendo l'algoritmo resistente alle rotazioni.
+Descriptor (BRIEF):
+\item I descrittori generati da ORB si basano su BRIEF, che crea descrittori binari (vettori di bit) anziché descrittori continui come SIFT. Questo li rende molto più compatti ed efficienti in termini di spazio e tempo.
+\item BRIEF è un descrittore non rotazionale, ma ORB include una versione modificata di BRIEF che tiene conto anche della rotazione.
+\item ORB è progettato per essere molto veloce, quindi è adatto per applicazioni in tempo reale, come il rilevamento di oggetti nei video in tempo reale o la visione robotica.
+\end{itemize}
+L'algoritmo ORB realizzato, segue gli stessi passi computazionali del corrispondente algoritmo SIFT.\\
+\begin{enumerate}
+\item \textbf{STEP 1: Inizializzazione}\\
+Inizializzazione dell'oggetto ORB tramite OpenCV. \\
+
+{\itshape orb = cv2.ORB\_create()}\\
+
+\item \textbf{STEP 2: Rilevamento di keypoints e descriptors}
+
+\begin{figure}[H]
+    \centering
+    \lstinputlisting[language=Python,label={lst:orbmatching}]{listings/bf.py}
+\end{figure}
+
+L'algoritmo ORB implementato, lavora con il \textbf{BFMatcher} (Brute-Force Matcher) e la \textbf{Hamming distance}.\\
+Con ORB si utilizza il BFMatcher poichè:
+\begin{itemize}
+\item Descrittori binari: ORB genera descrittori binari, e BFMatcher con Hamming distance è progettato per confrontare descrittori binari.
+\item Precisione: BFMatcher confronta ogni descrittore con ogni altro descrittore, restituendo i match più vicini.
+\item Velocità: Grazie ai descrittori binari, il confronto tramite la Hamming distance è molto veloce e adatto a scenari in tempo reale.
+\item Ratio Test: L'applicazione del Lowe's ratio test migliora ulteriormente la qualità dei match, riducendo i falsi positivi.
+\end{itemize}
+
+I passi seguenti sono simili a quelli implementati per l'algoritmo SIFT.
+\end{enumerate}
+
+\end{enumerate}
+E' importante comprendere la differenza nell'utilizzo del metodo Flann rispetto al metodo BFMatcher:
+\begin{itemize}
+
+\item FLANN: È più veloce e progettato per la ricerca approssimata su set di dati di grandi dimensioni, specialmente con descrittori continui (SIFT, SURF). Usa algoritmi come KD-Tree e LSH per velocizzare la ricerca.
+\item BFMatcher (Brute-Force Matcher): È più semplice e cerca le corrispondenze in modo esatto confrontando ogni descrittore di una immagine con tutti i descrittori dell'altra. È più lento di FLANN su dataset di grandi dimensioni.
+
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Pre-processing dei dati}
+Con l'accrescimento del dataset, le immagini si presentano a dimensionalità molto diversificata.\\
+Questo, però, porta notevoli problemi di prestazioni nell'implementazione di algoritmi di elaborazione di immagini.\\
+Alcune immagini ortopanoramiche, infatti, presentano una dimensionalità molto elevata, oltre i 2000 pixel, richiedendo un tempo di elaborazione e processamento molto alto e costoso. Inoltre, la maggioranza degli algoritmi avanzati di elaborazione di immagine richiede un formato comune di dati in input.\\
+Al fine di uniformare il database per mettere agli algoritmi di computer vision di operare in maniera efficiente, è stata effettuata una prima fase di pre-processing con obiettivo il ridimensionamento.\\
+A tale scopo, dunque, le immagini sono state propriamente ridimensionate:
+\begin{itemize}
+\item Immagini di Bitewing Ortopanoramiche: {\itshape 512x256}.
+\item Immagini di Bitewing Frontali: mantenute invariate.
+\item Immagini di Bitewing Laterali: mantenute invariate.
+\end{itemize}
+
+Un'ulteriore operazione necessaria in questa fase, è la definizione di un principio di uniformità della scalari di colori dell'intero dataset. Tutte le immagini, infatti, possono essere definite come immaginarie in scala di grigi, allegerendone e semplifcandone la manipolazione.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Valutazione prestazioni}
+In seguito all'aumento della cardinalità del dataset da interrogare, ossia il dataset composto dalle immagini ortopanoramiche è necessario valutare il cambiamento delle prestazioni degli algoritmi di matching, in termini di accuracy e in termini di tempo.\\
+I risultati ottenuti dagli algoritmi precedentemente descritti sull'intero dataset espanso, sono i seguenti:
+\begin{figure}[H]
+	\centering
+	\includegraphics[height=3cm,width=13cm]{figures/frontal1.pdf}
+    	\caption{Accuracy Frontal Matching}
+	\label{fig:frontal1}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[height=3cm,width=13cm]{figures/dx1.pdf}
+   	\caption{Accuracy BTW DX Matching}
+	\label{fig:dx1}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[height=3cm,width=13cm]{figures/sx1.pdf}
+   	\caption{Accuracy BTW SX Matching}
+	\label{fig:sx1}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[height=3cm,width=13cm]{figures/tempi1.pdf}
+    	\caption{Tempi di esecuzione con Dataset Aumentation}
+	\label{fig:tempi1}
+\end{figure}
+
+L'impatto maggiore che comporta la crescita della cardinalità del dataset è sui tempi di esecuzione richiesti per eseguire algoritmi sofisticati come SIFT. Il tempo necessario per eseguire tutti i match, per 100 query si aggira intorno ai 15 minuti; tempo non sottovalutabile per  le prestazioni.\\
+Il sistema infatti non è responsivo e richiede tempi di elaborazione troppo lunghi.\\
+
+Per quanto riguarda le prestazioni, esse sono diminuite,  a causa dell'aumentare del numero di confronti richiesti.\\
+Da questo punto, seguono diverse operazioni di modellamento al fine di realizzare un sistema che sia il più robusto, generale, preciso e veloce possibile.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Il problema dei keypoint}
+Il sistema che è stato prodotto implementa due algoritmi di Feature Matching per la ricerca di keypoint e calcolo dei relativi descrittori. \\
+L'algoritmo così implementato, però, non è un algoritmo intelligente: infatti, effettua la ricerca sull'intera immagine di input.\\
+
+Visivamente, un suo possibile risultato è il seguente:
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=14cm]{figures/keypointall.pdf}
+    	\caption{Keypoint e Keypoint Descriptors}
+	\label{fig:keypointall}
+\end{figure}
+
+Appare subito evidente come questa ricerca non sia finalizzata solo all'area di interesse. Tutti i keypoint e relativi descrittori che non appartengono all'area dentale, non sono rilevanti, risultando addirittura fuorvianti nella ricerca del match ottimale.\\
+E' necessario, perciò, raffinare la ricerca solo all'area di interesse, evitando errori di valutazione e il consumo di risorse inutilmente.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Algoritmi di Masking}
+Appartenente alla famiglia delle tecniche di pre-processing di immagini, riveste particolare importanza la tecnica di \textbf{Masking}. \\
+Il {\itshape masking}, in computer vision, è una tecnica largamente utilizzata allo scopo di selezionare o evidenziare particolari regioni di interesse all'interno di un'immagine, ignorandone, di conseguenza, le altre. Questa tecnica è utile in una vasta gamma di applicazioni, tra cui: {\itshape segmentazione delle immagini, rilevamento degli oggetti, elaborazione di immagini e visione artificiale}.\\
+In particolare, è importante evidenziare alcune di queste applicazioni: 
+\begin{enumerate}
+\item \textbf{Segmentazione delle Immagini}:
+Il masking è essenziale per operare una prima segmentazione delle immagini, quando l'obiettivo è quello di separare specifiche regioni di interesse dell'immagine, determinate sulla base di alcune caratteristiche particolari come: colore, intensità o texture. \\
+Si vogliono distinguere due tipologie principali di segmentazione:
+\begin{itemize}
+\item \textbf{Semantic Segmentation}: Ogni pixel dell'immagine viene classificato in una categoria specifica (es. cielo, strada, edifici).
+\item \textbf{Instance Segmentation}: Simile alla precedente, ma differenzia anche tra diverse istanze della stessa classe (es. due persone separate).
+\end{itemize}
+
+\item \textbf{Rilevamento degli Oggetti}:
+Il masking può essere utilizzato per creare {\itshape maschere binarie} che identificano la presenza e la posizione di oggetti specifici di interesse in un'immagine. Le tecniche più avanzate includono l'utilizzo di {\itshape reti neurali}.
+
+\item \textbf{Elaborazione delle Immagini}:
+In vari processi di elaborazione delle immagini, il masking può essere usato per applicare trasformazioni solo a certe parti di un'immagine, come: filtraggio, correzione del colore o rimozione di oggetti.
+
+\item \textbf{Inpainting e Super-Resolution}:
+Il masking può essere utilizzato per compiti di inpainting (riempimento di parti mancanti di un'immagine) o super-risoluzione (miglioramento della risoluzione di un'immagine). In questi casi, una maschera indica le aree da ripristinare o migliorare.
+\end{enumerate}
+
+Tra le tecniche di masking più utilizzate ci sono:
+\begin{itemize}
+\item \textbf{Maschere Binarie}:
+Una maschera binaria è un'immagine con due valori (0 e 1) che indica quali parti dell'immagine devono essere considerate (1) e quali devono essere ignorate (0).
+\item \textbf{Maschere di Rete Neurali}:
+Utilizzare una rete neurale per generare una maschera che segmenti l'immagine evidenziando diversi oggetti di interesse.
+\end{itemize}
+
+Sono tantissime i campi in cui trova impiego questa tecnica, tra i più noti si possono citare:
+\begin{itemize}
+\item \textbf{Riconoscimento facciale}: Mascherare aree irrilevanti per concentrare l'analisi sul viso.
+\item \textbf{Navigazione autonoma}: Identificazione delle strade e dei segnali stradali.
+\item \textbf{Medicina}: Segmentazione di immagini mediche per identificare tumori o altre anomalie.
+\item ...
+\end{itemize}
+Tantissimi sono i vantaggi dofferti dalla tecnica di Masking:
+\begin{itemize}
+\item \textbf{Precisione}: Consente di isolare aree specifiche per un'analisi più precisa.
+\item \textbf{Efficienza}: Riduce il rumore e le informazioni irrilevanti, migliorando le prestazioni di modelli di visione artificiale.
+\item \textbf{Versatilità}: Può essere applicato in vari campi, dalla sicurezza, alla medicina o alla robotica.
+\end{itemize}
+Il masking è quindi una tecnica fondamentale in computer vision, essenziale per molte applicazioni avanzate e per migliorare la precisione e l'efficienza dei sistemi di analisi delle immagini.\\
+Questa tecnica si rivela fondamentale e molto fruttante se eseguita prima dell'applicazione dei successivi algoritmi di segmentazione; questo perchè gli {\itshape algoritmi di segmentazione} si concentreranno solo sulla zona evidenziata ({\itshape maschera}) e senza essere fuorviati da particolari non rilevanti per la data analisi. 
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Masking for teeth identification}
+Allo scopo di realizzare un sistema robusto e generale, è stato implementato un apportuno algoritmo di estrazione di {\itshape maschere binarie}.
+L'algoritmo si basa sulla realizzazione di una rete neurale molto conosciuta per la Semantic Segmentation: \textbf{U-Net}.
+\begin{figure}[H]
+  	\centering
+   	\includegraphics[width=14cm]{figures/unet.pdf}
+    	\caption{Esempio di architettura di una CNN U-Net}
+	\label{fig:unet}
+\end{figure}
+
+La CNN che è stata perciò realizzata ha lo scopo di effettuare una {\itshape semantic segmentation} al fine di delimitare le zone con presenza di denti da quelle non. Più in particolare, è stata implementata una particolare rete convoluzionale, chiamata \textbf{GAN (Generative Adversarial Network)}.\\
+
+L'architettura proposta presenta diversi componenti:
+\begin{enumerate}
+\item \textbf{Encoder-Decoder}: L'architettura encoder riduce la dimensione spaziale mantenendo le informazioni rilevanti, mentre il decoder ricostruisce l'immagine. Le skip connections aiutano a preservare dettagli importanti durante la risalita.
+\item \textbf{Generatore}: Produce la maschera di output. Utilizza convoluzioni trasposte per ripristinare la dimensione spaziale.
+\item \textbf{Discriminatore}: Distingue tra maschere generate e reali, aiutando il generatore a migliorarsi.
+\item \textbf{GAN}: Allena il generatore e il discriminatore insieme in una modalità  "a somma zero".
+\end{enumerate}
+
+In generale, infatti un Generative Adversarial Network (GAN) è un tipo di rete neurale utilizzata per generare nuovi dati a partire da un set di dati di addestramento. Un GAN è costituito da due componenti principali: un Generatore e un Discriminatore. Questi due modelli vengono addestrati insieme in modo antagonista.
+\begin{itemize}
+\item Generatore:
+\begin{itemize}
+\item Scopo: Generare nuovi dati simili ai dati di addestramento.
+\item Funzionamento: Prende come input un vettore casuale (spesso chiamato rumore) e produce dati che cercano di imitare i dati reali.
+\end{itemize}
+\item Discriminatore:
+\begin{itemize}
+\item Scopo: Distinguere tra dati reali e dati generati.
+\item Funzionamento: Prende come input un dato (che può essere reale o generato) e produce una probabilità che indica quanto sia reale il dato.
+\end{itemize}
+Il generatore viene addestrato per ingannare il discriminatore. L'obiettivo è minimizzare la capacità del discriminatore di distinguere tra dati reali e dati generati.\\
+\end{itemize}
+Al fine di ottemperare a queste funzionalità, sono state definite opportune funzioni che ne definiscono la struttura:
+\begin{enumerate}
+\item \textbf{convolution}:\\
+Esegue una convoluzione 2D, seguita da normalizzazione a gruppi (Group Normalization) e un'attivazione non lineare.\\
+Nel caso in cui la convoluzione faccia parte del decoder (conv\_type == 'decoder'), vengono aggiunte ulteriori convoluzioni e normalizzazioni con l'aumento dei filtri, seguite dall'attivazione.\\
+Infine, utilizza una connessione di shortcut tramite layers.average che fonde il risultato della convoluzione con una convoluzione a 1x1 del dato d'ingresso.
+
+\item \textbf{encoder}:\\
+Esegue convoluzioni e una normalizzazione e applica un downsampling con un Average Pooling 2D per ridurre la dimensione spaziale dell'immagine.\\
+Restituisce sia il risultato convoluto (che verrà ulteriormente elaborato), sia una skip connection, usata successivamente nel decoder.
+
+\item \textbf{decoder}:\\
+Esegue una convoluzione trasposta per risalire nella dimensione spaziale (equivalente a un'operazione di upsampling).\\
+Combina il risultato con la rispettiva skip connection dall'encoder (fusione tramite layers.average), per preservare dettagli a diverse scale di risoluzione.\\
+Continua con ulteriori convoluzioni e normalizzazioni, similmente a quanto accade nella funzione convolution.
+
+\item \textbf{generator}:\\
+Implementa una rete encoder-decoder profonda. Ogni livello dell'encoder riduce la dimensione spaziale e aumenta il numero di filtri, mentre il decoder ripristina la risoluzione spaziale.\\
+Utilizza attivazioni \textbf{LeakyReLU} nell'encoder e \textbf{ReLU} nel decoder.\\
+Al termine, genera l'output (la maschera) tramite una convoluzione trasposta con attivazione sigmoide.
+
+\item \textbf{discriminator}:\\
+Prende come input un'immagine e una maschera e li moltiplica (operazione multiply), combinandoli per discriminare se la maschera è reale o generata.\\
+Passa l'input combinato attraverso un'architettura encoder simile a quella del generatore.\\
+Al termine, un GlobalAveragePooling2D seguita da un Dense layer produce un output scalare che rappresenta la stima del discriminatore se la maschera è reale o generata.\\
+Viene poi compilato con una funzione di perdita e un ottimizzatore per l'addestramento.
+
+\item \textbf{GAN}:\\
+Combina il generatore e il discriminatore in un modello GAN.\\
+Il discriminatore è congelato durante l'addestramento del GAN, per addestrare solo il generatore.\\
+L'output del GAN è la probabilità che il discriminatore classifichi correttamente l'immagine generata.
+\begin{figure}[H]
+  	\centering
+    	\includegraphics[width=16cm]{figures/gan.pdf}
+   	\caption{Modello GAN}
+	\label{fig:gan}
+\end{figure}
+
+\item \textbf{Addestramento GAN}:\\
+Il ciclo di addestramento iterativo allena il discriminatore per distinguere tra maschere reali e generate e il generatore per ingannare il discriminatore.\\
+
+\item \textbf{Addestramento del generatore}:\\
+Per ultimo, il generatore viene addestrato separatamente (dopo che alcune sue parti vengono congelate), con una loss specifica (come BinaryFocalCrossentropy) e metriche di precisione e richiamo per valutare le prestazioni.
+\end{enumerate}
+
+\subsubsection{Leaky ReLU e ReLU}
+In computer vision (e più in generale nelle reti neurali), sia la funzione \textbf{ReLU} (Rectified Linear Unit) che la funzione \textbf{Leaky ReLU} sono {\itshape funzioni di attivazione}, utilizzate per introdurre non linearità nel modello. Queste funzioni aiutano la rete a imparare rappresentazioni complesse dai dati, come immagini, segnali o sequenze. In particolare:
+\begin{enumerate}
+\item \textbf{ReLU}:\\
+La funzione ReLU è una delle funzioni di attivazione più utilizzate nelle reti neurali profonde. È definita semplicemente dalla seguente formula:
+
+\begin{figure}[H]
+  	\centering
+   	\includegraphics[height=1cm, width=5cm]{figures/relu.pdf}
+    	\caption{Funzione di attivazione ReLU}
+	\label{fig:relu}
+\end{figure}
+
+\begin{itemize}
+\item Se il valore di input è positivo, ReLU restituisce lo stesso valore.
+\item Se il valore di input è negativo, ReLU restituisce 0.
+\end{itemize}
+
+I vantaggi nel suo utilizzo sono:
+\begin{itemize}
+\item Computazione semplice: Richiede solo un confronto tra 0 e l'input, risultando computazionalmente efficiente.
+\item Sparsità: Molti neuroni possono avere output 0, il che aiuta a ridurre il carico computazionale e rende il modello più efficiente.
+\item Evita saturazione positiva: A differenza di altre funzioni di attivazione come sigmoid o tanh, la ReLU non soffre di saturazione nella parte positiva, permettendo un apprendimento più rapido.
+\end{itemize}
+Viceversa, esistono anche alcuni svantaggi indotti dall'utilizzo di questa particolare funzione:
+\begin{itemize}
+\item {\itshape Morte dei neuroni ReLU}: Se durante l'allenamento molti neuroni ottengono input negativi, il loro output diventa sempre zero, il che può portare a neuroni "morti", cioè non più aggiornati durante il backpropagation.
+\end{itemize}
+
+\item \textbf{Leaky ReLU}:
+Per risolvere il problema dei neuroni morti in ReLU, è stata introdotta la Leaky ReLU.  Diversamente da ReLU, invece di forzare un output pari a 0 per gli input negativi, Leaky ReLU restituisce un piccolo valore negativo (in genere una frazione dell'input, come 0.01 * x).\\
+Più specificatamente, la funzione è definita come:
+
+\begin{figure}[H]
+  	\centering
+    	\includegraphics[height=2cm, width= 7cm]{figures/leaky.pdf}
+    	\caption{Funzione di attivazione Leaky ReLU}
+	\label{fig:leaky}
+\end{figure} 
+Dove alpha è un piccolo valore positivo, tipicamente alpha = 0.01.\\
+
+I vantaggi che offre questo modello sono:
+\begin{itemize}
+\item Assenza di neuroni morti: Gli input negativi non vengono forzati a zero, ma moltiplicati per un piccolo valore, quindi i neuroni possono comunque contribuire al gradiente e continuare l'apprendimento.
+\item Performance migliori in alcuni casi: Può migliorare la performance rispetto a ReLU quando devono essere gestiti molti input negativi.
+\end{itemize}
+
+Uno svantaggio introdotto, però, è il seguente:
+\begin{itemize}
+\item Il valore di alpha  è un iperparametro e come tale deve essere scelto a priori e, perciò, potrebbe richiedere tuning per ottenere i migliori risultati.
+\end{itemize}
+
+In generale si può dire che:
+\begin{itemize}
+\item ReLU è più semplice ed efficiente nella maggior parte dei casi, ma potrebbe causare neuroni morti.
+\item Leaky ReLU è una versione modificata che riduce il rischio di neuroni morti, ma può richiedere più attenzione nel tuning.
+\end{itemize}
+\end{enumerate}
+
+\subsubsection{Algoritmo}
+L'algoritmo così implementato, viene addestrato su un dataset di 598 immagini ortopanoramiche a cui, per ognuna, viene presa in input la rispettiva maschera delineata manualmente. Viene effettuato uno split del dataset in train e validation set, il secondo composto da 80 immagini e dalle rispetttive maschere.\\
+La rete neurale viene addestrata e vengono aggiornati i corrispondenti pesi.\\
+Il processo viene ripetuto ricorsivamente sui nuovi pesi, per 10000 epoche. \\
+Successivamente, viene ripetuto l'addestramento sulle immagini appartenenti al validation set per 160 epoche di addestramento. Al fine di evitare il rischio di overfitting viene impostato {\itshape patience = 5}.\\
+
+Questo secondo addestramento è fondamentale ai fini della valutazione del modello di generazione delle maschere.\\
+I risultati ottenuti sono molto buoni, con:
+\begin{itemize}
+\item \textbf{Accuracy}: 0.97
+\item \textbf{Loss}: 0.02
+\item \textbf{Precision}: 0.9
+\end{itemize}
+
+Graficamente, è possibile visualizzare molto bene come il modello si adatti perfettamente ai dati.
+
+\begin{figure}[H]
+    	\centering
+    	\includegraphics[height=5cm,width=9cm]{figures/accuracy.pdf}
+    	\caption{Accuracy}
+	\label{fig:accuracy}
+\end{figure}
+\begin{figure}[H]
+    	\centering
+    	\includegraphics[height=5cm,width=9cm]{figures/precision.pdf}
+    	\caption{Precision}
+	\label{fig:precision}
+\end{figure}
+\begin{figure}[H]
+    	\centering
+   	\includegraphics[height=5cm,width=9cm]{figures/loss.pdf}
+    	\caption{Loss}
+	\label{fig:loss}
+\end{figure}
+
+
+La terza fase, quella di testing, viene effettuata sulle immagini appartenenti al dataset delle ortopanoramiche precedentemente definito. Il risultato prodotto da questa fase, è un dataset della stessa cardinalità di quello dato in input, ma costituito solo da maschere binarie ossia da immagini, in cui le parti evidenziate in bianco risiedono in corrispondenza delle aree dentali.
+\begin{figure}[H]
+    	\centering
+    	\includegraphics[height=4.5cm,width=9cm]{figures/mask_img.pdf}
+   	\caption{Immagine di partenza}
+	\label{fig:masking}
+\end{figure}
+\begin{figure}[H]
+    	\centering
+    	\includegraphics[height=4.5cm,width=9cm]{figures/mask_mask.pdf}
+    	\caption{Maschera binaria estratta}
+	\label{fig:mask}
+\end{figure}
+\begin{figure}[H]
+    	\centering
+   	\includegraphics[height=4.5cm,width=9cm]{figures/mask_tot.pdf}
+    	\caption{Sovrapposizione delle due immagini}
+	\label{fig:masktot}
+\end{figure} 
+
+Un possibile successivo raffinamento, vedrebbe la realizzazione di maschere applicate al singolo dente. Questo tipo di applicazione è nota come {\itshape Instance Segmentation}. Essa consentirebbe, infatti, l'identificazione tramite maschere dei singoli denti.\\
+A questo livello di sviluppo del progetto, però, è un livello di raffinamento non necessario, siccome, ai fini dell'identificazione dell'area in cui sono presenti è sufficiente utilizzare un algoritmo di semantic segmentation.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Estrazione dei keypoint con Maschere}
+A queso punto, allora è possibile combinare i risultati precedenti.\\
+Gli algoritmi di computer vision per l'estrazione dei keypoint tramite {\itshape maschere binarie} sono comunemente utilizzati per identificare caratteristiche distintive all'interno di una determinata area di un'immagine. Le maschere binarie consentono di delimitare le aree su cui concentrarsi, filtrando le regioni di interesse (ROI) e ignorando quelle che non sono rilevanti. Gli algoritmi di rilevamento dei keypoint vengono applicati, così, solo ai pixel all'interno della regione selezionata dalla maschera.\\
+Questo raffinamento comporta una serie di vantaggi, tra cui:
+\begin{itemize}
+\item \textbf{Ricerca mirata}: Le maschere binarie permettono di evitare il calcolo sui pixel non rilevanti, migliorando l’efficienza complessiva dell'algoritmo di ricerca.
+\item \textbf{Efficienza computazionale}: Riduce il numero di pixel su cui l'algoritmo deve lavorare, migliorandone la velocità.
+\item \textbf{Riduzione del rumore}: Limita l’analisi solo alle aree di interesse, ignorando i dati di fondo non rilevanti.
+\item \textbf{Controllo maggiore}: Consente un controllo più preciso su dove cercare i keypoint, utile per applicazioni specifiche come la segmentazione di immagini mediche o l'analisi di volti.
+\end{itemize}
+
+Vengono perciò combinati gli algoritmi di Feature Matching visti in precedenza, all'ausilio delle maschere binarie estratte attraverso la rete neurale.\\
+Gli step di computazione possono essere sequenzializzati come segue:
+\begin{enumerate}
+\item \textbf{Estrazione delle feature}:
+\begin{itemize}
+\item def {\itshape extract\_features}
+\item Input: Una lista di percorsi di immagini, un oggetto sift, e una lista facoltativa di percorsi per le maschere.
+\begin{itemize}
+\item Come primo step viene utilizzata per estrarre le feature sulle immagini ortopanoramiche attraverso l'ausilio delle maschere. Le maschere permettono, quindi, di restringere l'area di interesse di ricerca {\itshape solo} all'interno della zona evidenziata dalla maschera; le aree di colore bianco all'interno della maschera binaria, sono le zone la cui sovrapposizione con l'immagine corrispondente identifica l'area di ricerca.
+\item In secondo luogo, la ricerca delle feature sull'immagine di query pone la maschera a {\itshape None} e non viene definito nessun raffinamento più specifico.
+\end{itemize}
+\item Per ogni immagine, viene chiamata la funzione {\itshape image\_detect\_and\_compute}, a cui viene passata l'eventuale maschera.
+\item Vengono memorizzate  le informazioni relative a ciascuna immagine, inclusi keypoint e descrittori, in una lista di tuple.
+\item In output, viene restituita una lista di tuple contenenti le informazioni di: {\itshape percorso dell'immagine, immagine stessa, keypoint, e descrittori}.
+\end{itemize}
+
+\item \textbf{image\_detect\_and\_compute}:
+\begin{itemize}
+\item Input: Un oggetto sift (SIFT detector), il percorso di un'immagine, un percorso facoltativo per una maschera binaria.
+\item Legge l'immagine in scala di grigi.
+\item Se viene fornita una maschera, la carica e verifica che abbia la stessa dimensione dell'immagine, altrimenti solleva un errore.
+\item Utilizza l'oggetto SIFT per rilevare i keypoint e calcolare i descrittori nell'area dell'immagine coperta dalla maschera (se presente).
+\item In output: Ritorna l'immagine, i keypoint e i descrittori.
+\begin{figure}[H]
+	\centering
+    	\lstinputlisting[language=Python,label={lst:kpwithmask}]{listings/detectcomputemask.py}
+\end{figure} 
+\end{itemize}
+
+\item \textbf{Feature Matching}:
+\begin{itemize}
+\item def {\itshape match\_images}.
+\item Input: Due set di descrittori (des1 e des2), un metodo di matching (FLANN o brute force), e un parametro k per il numero di vicini più prossimi da considerare.
+\item La funzione verifica se i descrittori sono validi ed esegue il matching tra i descrittori utilizzando il metodo specificato:
+\begin{itemize}
+\item FLANN: Usa una struttura K-D tree per il matching rapido.
+\item Brute force (BFMatcher): Confronta direttamente le coppie di descrittori.
+\end{itemize}
+\item Esegue il \textbf{ratio test di Lowe} (migliora la qualità del matching), mantenendo solo i match con una distanza relativa bassa, tra i due descrittori.
+\item in output: Restituisce una lista di match validi.
+\end{itemize}
+
+\item \textbf{Ricerca dei migliori match}:
+\begin{itemize}
+\item Per ogni immagine di query, esegue il matching delle feature usando match\_images.
+\item Ordina le immagini ortopanoramiche confrontate, sulla base del numero di match individuati.
+\item In output: Restituisce i primi {\itshape top\_n match} con le informazioni di immagine orto e numero di match, in ordine decrescente.
+\end{itemize}
+
+\item \textbf{Valutazione dell'accuratezza del matching}:
+\begin{itemize}
+\item Per ogni immagine di query controlla se all'interno della lista dei migliori match individuati è presente quello relativo all'immagine ortopanoramica corretta.
+\item Incrementa il contatore per i match nella posizione, rispettivamente se individuato nella posizione 1, o entro le prime 3 o 5 posizioni.
+\item Calcola l'\textbf{accuratezza} delle predizioni ai Rank@1, Rank@3, e Rank@5 (precisione nell'individuare il match corretto nei primi 1, 3 o 5 match migliori).
+\item In output: resistuisce i valori di accuracy individuati.
+\end{itemize}
+\end{enumerate}
+
+\subsubsection{Scelta di k e Lowe's Ratio Test}
+La scelta di k deve essere effettuata correttamente al fine di ottenere un confronto significativo tra più vicini. Di solito k è impostato a 2 per permettere l'uso del Lowe's ratio test.\\
+Il \textbf{Lowe's ratio test} confronta il miglior match con il secondo miglior match al fine di filtrare i falsi positivi. Perché questo test funzioni, è necessario avere almeno 2 vicini per ogni descrittore. Se la distanza del miglior match non è significativamente più bassa (di $solito < $0.85) rispetto al secondo, il match viene considerato un falso positivo. Questo è particolarmente utile in scenari in cui ci sono molte caratteristiche simili e il rischio di ottenere match errati è alto.
+
+\subsubsection{Feature Extraction con Masking}
+E' possibile visualizzare i benefici introdotti dall'ausilio di opportune maschere nella ricerca dei keypoint e calcolo dei relativi descrittori in un'immagine ortopanoramica.
+
+\begin{figure}[H]
+  	\centering
+    	\includegraphics{figures/kpmask.pdf}
+    	\caption{Feature Extraction con Masking}
+	\label{fig:kpmask}
+\end{figure} 
+
+Risulta immediato visualizzare come, attraverso l'ausilio delle maschere, sia possibile concentrare la ricerca dei punti di interesse {\itshape solo} nell'area coperta dalla relativa maschera, ossia quella identificativa dell'impronta dentale.
+
+\subsubsection{Problemi introdotti}
+Attraverso l'ausilio delle maschere è insorto un nuovo problema durante il processo di Feature Matching.\\
+L'algoritmo, per come è stato definito, effettua un processo di ricerca dei migliori match utilizzando una misura di distanza: {\itshape knnMatch}.\\
+
+La funzione \textbf{knnMatch()} di OpenCV è ampiamente utilizzata per il matching dei descrittori basato sul concetto di k-nearest neighbors (k-NN). Tuttavia, ci sono alcuni vincoli e considerazioni importanti da valutare durante l'utilizzo di knnMatch, quali:
+\begin{itemize}
+\item \textbf{Numero minimo di descrittori}:\\
+Entrambi i set di descrittori devono avere almeno k descrittori, dove k è il numero di vicini più prossimi da cercare per ciascun descrittore.\\
+Se uno dei set di descrittori ha meno di k elementi, non è possibile trovare k vicini per ogni descrittore; la funzione solleva un errore o restituisce risultati non validi. \\
+Nell'algoritmo implementato \textbf{k=2}; il set di descrittori deve contenere almeno 2 descrittori.
+
+\item \textbf{Tipo di dati dei descrittori}:\\
+I descrittori devono essere in formato \textbf{float32} quando si usa il matcher FLANN.\\
+L'algoritmo FLANN (Fast Library for Approximate Nearest Neighbors), spesso usato in combinazione con knnMatch, richiede che i descrittori siano di tipo float32 per eseguire il matching. Se i descrittori sono in un formato diverso (ad esempio int), la funzione non funziona correttamente.
+
+\item \textbf{Comparabilità dei descrittori}:\\
+I descrittori devono essere estratti dallo stesso tipo di feature (ad esempio, SIFT con SIFT, oppure ORB con ORB). \\
+Se si utilizzano descrittori generati con algoritmi differenti (ad esempio, SIFT contro ORB), knnMatch() non funziona correttamente, perché i descrittori avranno dimensioni e valori differenti. I descrittori devono essere comparabili, ossia, provenire dallo stesso metodo di estrazione delle feature.
+
+\end{itemize}
+
+Attraverso l'ausilio delle maschere viene ridotto notevolemente il rumore e l'estrazione di keypoint in punti non appartenenti alla RoI.\\
+Eseguendo l'algoritmo senza opportuni controlli, vengono riportati una serie di messaggi di errore relativi alla mancata o insufficiente estrazione di keypoint o alla bassa dimensionalità dei descrittori.\\
+Questo errore, che inzialmente non era mai riscontrato, è provocato da due migliorie:
+\begin{enumerate}
+\item Accrescimento della cardinalità e variabilità del dataset di ortopanoramiche.
+\item Estrazione dei keypoint solo nella RoI.
+\end{enumerate}
+
+Analizzando i casi in cui gli errori vengono riscontrati è possibile valutare visivamente la motivazione:
+\begin{figure}[H]
+  	\centering
+	\includegraphics{figures/nodenti.pdf}
+   	\caption{Assenza di denti}
+	\label{fig:nodenti}
+\end{figure} 
+
+In casi di assenza totale o bassa cardinalità del numero di denti presenti in un'immagine ortopanoramica il numero dii keypoint e la dimensione dei relativi descrittori è bassa se non addirittura nulla. E' necessario, perciò, introdurre opportuni controlli prima di effettuare la valutazione del Matching.\\
+
+\begin{figure}[H]
+	\centering
+    	\lstinputlisting[language=Python,label={lst:kpcontrol}]{listings/controllokp.py}
+\end{figure} 
+
+\begin{enumerate}
+\item \textbf{Numero minimo di descrittori}: Prima di chiamare knnMatch, è necessario verificare che il numero di descrittori sia maggiore o uguale a k (con k=2) su entrambi i set di descrittori.
+\item \textbf{Tipo di dati dei descrittori}: Vengono convertiti i descrittori in float32 prima di calcolare knnMatch.
+\end{enumerate}
+
+Di conseguenza, se vengono individuati dei descrittori che non rispettano tali vincoli, il matching viene saltato.
+
+\subsubsection{Risultati ottenuti}
+Vengono confrontati ora i risultati ottenuti attraverso questo tipo di computazione rispetto ai risultati ottenuti precedentemente.
+\begin{figure}[H]
+	\centering
+	\includegraphics{figures/frontal2.pdf}
+    	\caption{Accuracy Frontal Matching con Masking}
+	\label{fig:frontal2}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics{figures/dx2.pdf}
+    	\caption{Accuracy BTW DX Matching con Masking}
+	\label{fig:dx2}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics{figures/sx2.pdf}
+    	\caption{Accuracy BTW SX Matching con Masking}
+	\label{fig:sx2}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics{figures/tempi2.pdf}
+   	\caption{Tempi di esecuzione con Masking}
+	\label{fig:tempi2}
+\end{figure}
+
+Un esempio di Feature Matching con l'ausilio delle maschere è il seguente:
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=15cm,height=7cm]{figures/matchmask.pdf}
+    	\caption{Feature Matching con Masking}
+	\label{fig:matchmask}
+\end{figure}
+
+L'area di matching ora è priva di outlier, punti al di fuori dell'area dentale.\\
+Dalle tabelle riassuntive dei valori ottenuti è possibile constatare che:
+\begin{itemize}
+\item Complessivamente i valori di accuracy sono diminiuiti.
+\item I tempi richiesti per il singolo match sono dimininuiti.
+\end{itemize}
+
+Il sistema così progettato è diventato più efficiente e consistente. I tempi richiesti per il processamento sono notevolmente diminuiti grazie al fatto che:
+\begin{itemize}
+\item I keypoint individuati sono ristretti alla sola area di interesse, diminuendo così il numero complessivo di punti individuati non significativi.
+\item I corrispondenti descrittori sono meno e di conseguenza diminuisce il numero di confronti da dover effettuare.
+\end{itemize}
+Viene perciò migliorata l'efficienza del sistema di match e la reattività del sistema di risposta.\\
+
+Per quanto riguarda, invece, i valori di accuracy questi sono diminuiti a fronte del fatto che viene ristretto il campo di ricerca. Questa conseguenza è inevitabile e naturale, a causa dell'aumento del livello di precisione del sistema. La ricerca ora è incentrata unicamente nell'area di interesse e il valore di accuracy risulta ora più veritiero e incentrato nel problema in esame.\\
+Complessivamente, dunque, i risultati ottenuti sono molto buoni e il sistema risultante è più robusto, efficiente, reattivo e corretto.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Il problema della RoI}
+Attraverso l'utilizzo delle maschere il processo di feature matching risulta più accurato e robusto.\\
+A questo punto, però, è possibile eseguire un ulteriore passo di raffinamento. \\
+I match che vengono effettuati sono tra immagini di query che possono essere:
+\begin{itemize}
+\item Radiografie frontali.
+\item Radiografie laterali, destra e sinistra.
+\end{itemize}
+
+Di conseguenza, effettuare il match di un'immagine di bitewing, frontale o laterale, nell'intera sezione dell'apparato dentale, può essere fuorviante e a complessità maggiore non necessaria. Infatti, il matching tra un'immagine di query frontale rispetto ad un'ortopanoramica non necessità il confronto tra descrittori dell'ortopanoramica esterni alla zona centrale dell'immagine.\\
+Per questo, allora, è possibile definire una Region of Interest più restrittiva, mirando specificatamente la zona di interesse. 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Restringimento delle RoI}
+Come introdotto è possibile effettuare un ulteriore restringimento della RoI delimitando il processo di matching alla sola zona di interesse dell'immagine di querying.\\
+A tale scopo, dunque, vengono individuate le aree di interesse attraverso un processo di estrazione delle RoI sulle maschere.\\
+L'idea, infatti, è quella utilizzare i benefici introdotti dall'utilizzo delle maschere binarie applicate alle immagini ortopanoramiche. La maschera, ora, viene ristretta alla sola area di interrogazione: frontale per le immagini "FRONTAL\_n" e laterale destra e sinistra per le immagini "BTW DX\_n" e "BTW SX\_n".\\
+
+Vengono definite apposite funzioni di elaborazione di immagine:
+\begin{enumerate}
+\item \textbf{detect\_white\_region}:
+\begin{itemize}
+\item Ha lo scopo di rilevare la bounding box più esterna che racchiude tutte le regioni bianche presenti all'interno di una maschera binaria.
+\item A tale scopo, viene applicata una soglia binaria all'immagine per ottenere una maschera coi pixel bianchi (valore 255) e neri (valore 0). Viene utilizzata la soglia 254 per catturare solo le aree bianche con valore 255.
+\item Viene utilizzata la funzione {\itshape cv2.findContours()} per rilevare i contorni delle regioni bianche.
+\item Se non vengono individuati contorni viene restituito None.
+\item Viceversa, per ogni contorno trovato, calcola la bounding box utilizzando la funzione {\itshape cv2.boundingRect()}, e aggiornando i valori minimi e massimi delle coordinate x e y per ottenere la bounding box totale che racchiude tutte le regioni bianche.
+\item In output vengono restituite le coordinate della bounding box: \{x\_min, y\_min, x\_max, y\_max\}.
+\end{itemize}
+
+\item \textbf{get\_central\_part\_of\_bbox}:
+\begin{itemize}
+\item Ha lo scopo di estrarre la parte centrale della bounding box rilevata dall'immagine originale, basandosi su un parametro di rapporto centrale ({\itshape central\_ratio}), che specifica quale proporzione della larghezza della bounding box mantenere.
+\item Data in input l'immagine, la bounding box individuata attraverso l'utilizzo della funzione precedente e un valore di central\_ratio, veiene calcolata la larghezza della bounding box e ridotta sulla base del valore specificato. 
+\item Viene calcolato il centro orizzontale della bounding box, lasciandone invariata l'altezza.
+\item Viene così inizializzata una nuova maschera vuota della stessa dimensione dell'immagine.
+\item Viene poi copiata solo la parte centrale definita precedentemente dalla maschera originale.
+\item In output viene restituita la nuova maschera, che individuerà una nuova area di ricerca più restrittiva.
+\end{itemize}
+
+\begin{figure}[H]
+	\centering
+    	\lstinputlisting[language=Python,label={lst:roi}]{listings/roi.py}
+\end{figure} 
+
+\item \textbf{get\_dx\_part\_of\_bbox}:
+\begin{itemize}
+\item Ha lo scopo di estrarre la parte destra della bounding box dall'immagine di masking originale.
+\item Data la larghezza della bounding box e il valore di {\itshape lateral\_ratio}, viene determinata la larghezza della regione destra che si vuole mantenere.
+\item Vengono, perciò, calcolate le nuove coordinate della bounding box destra.
+\item Le coordinate verticali rimangono, invece, inalterate.
+\item Similmente a prima viene inizializzata una maschera vuota della stessa dimensione dell'immagine.
+\item Veien poi copiata la porzione dell'immagine della maschera originale corrispondente alla regione destra nella maschera vuota.
+\item In output viene restituita la maschera contenente solo la parte destra della maschera binaria di partenza.
+\end{itemize}
+
+\item \textbf{get\_sx\_part\_of\_bbox}:
+\begin{itemize}
+\item Ha lo scopo di estrarre la parte sinistra della bounding box dall'immagine di masking originale.
+\item Viene effettuato un processo simile al caso precedente ma, diversamente da prima, viene mantenuto il focus sulla parte sinistra della maschera binaria di partenza.
+\item In output viene restituita una nuova maschera, contenente solo la sezione sinistra dell'immagine di input rappresentante una maschera binaria completa.
+\end{itemize}
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=8cm]{figures/maskintera.pdf}
+    \caption{Maschera OPT binaria di partenza}
+    \label{fig:maskintera}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.4\textwidth}
+	\centering
+    	\includegraphics[width=8cm]{figures/maskfrontal.pdf}
+    	\caption{Maschera bitewing frontale}
+    	\label{lab:Maschera bitewing frontale}
+    \end{minipage} \hfill
+    \begin{minipage}{0.4\textwidth}
+    	\centering
+    	\includegraphics[width=8cm]{figures/masksx.pdf}
+    	\caption{Maschera bitewing sinistro}
+    	\label{lab:Maschera bitewing sinistro}
+    \end{minipage}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=8cm]{figures/maskdx.pdf}
+    \caption{Maschera bitewing destro}
+    \label{fig:Maschera bitewing destro}
+\end{figure}
+%Definizione di RoI più restrittive
+
+Vengono perciò a definirsi 3 nuovi dataset, della stessa cardinalità del dataset delle ortopanoramiche, ciascuno contenente le relative maschere ristrette.\\
+A questo punto, viene definito un algoritmo di Feature Matching che utilizza queste nuove maschere binarie.\\
+
+Viene perciò istanziato un oggetto SIFT a partire dai metodi definiti nel punto precedente, ma a cui vengono fornite divere versioni delle maschere binarie:
+\begin{itemize}
+\item Per l'interrogazione del dataset delle immagini frontali, viene fornito all'algoritmo l'insieme delle maschere in cui è stata mantenuta unicamente l'area centrale della maschera originaria. Così facendo, l'area di identificazione dei keypoint per le immagini ortopanoramiche viene ristretta unicamente alla zona centrale. Il processo, dunque, sarà ancora più mirato e specifico rispetto al caso precedente. Infatti, tutti i punti esterni a quest'area, durante la fase di interrogazione delle immagini di bitewing frontali, possono essere considerati punti outlier.
+\item  Per l'interrogazione, invece, del dataset contenente le immagini di bitewing laterale destro, viene dato in input all'algoritmo l'insieme delle maschere in cui è stata mantenuta unicamente l'area laterale destra della maschera originaria. L'area di analisi dei keypoint per le immagini ortopanoramiche viene ristretta unicamente alla zona laterale destra; tutti i punti esterni a quest'area, durante la fase di interrogazione delle immagini di bitewing laterale destro, possono essere considerati punti outlier.
+\item Similmente ai casi precedenti, per l'interrogazione del dataset delle immagini laterali sinistre, viene fornito all'algoritmo l'insieme delle maschere in cui è stata mantenuta unicamente l'area laterale sinistra della maschera originaria. Così facendo, l'area di identificazione dei keypoint per le immagini ortopanoramiche viene ristretta unicamente alla zona laterale sinistra e tutti i punti esterni a quest'area, possono essere considerati punti outlier.
+\end{itemize}
+
+\subsection{Valutazioni}
+L'applicazione di questo algoritmo alle immagini ortopanoramiche, porta a risultati molto più accurati attraverso un'analisi mirata alle sole RoI:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=8cm]{figures/optfrontal.pdf}
+    \caption{Maschera OPT frontal}
+    \label{fig:mascherafrontal}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+	\centering
+    	\includegraphics[width=8cm]{figures/optsx.pdf}
+    	\caption{Maschera OPT sx}
+    	\label{lab:Maschera sx}
+    \end{minipage}\hfill
+    \begin{minipage}{0.45\textwidth}
+    	\centering
+    	\includegraphics[width=8cm]{figures/optdx.pdf}
+    	\caption{Maschera OPT dx}
+    	\label{lab:Maschera dx}
+    \end{minipage}\hfill
+\end{figure}
+
+I risultati così ottenuti sono riportati di seguito:
+\begin{figure}[H]
+	\centering
+	\includegraphics{figures/frontal3.pdf}
+   	\caption{Accuracy Frontal Matching con RoI}
+	\label{fig:frontal3}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics{figures/dx3.pdf}
+    	\caption{Accuracy BTW DX Matching con RoI}
+	\label{fig:dx3}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics{figures/sx3.pdf}
+    	\caption{Accuracy BTW SX Matching con RoI}
+	\label{fig:sx3}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics{figures/tempi3.pdf}
+    	\caption{Tempi di esecuzione con definizione di RoI}
+	\label{fig:tempi3}
+\end{figure}
+
+I valori di accuracy sono complessivamente diminuiti a discapito però di un sistema più robusto, corretto e veritiero.\\
+Viceversa, invece, i tempi registrati sono diminuiti ulteriormente. Questo grazie al minor numero di keypoint individuati a causa della minor area di ricerca e calcolo più veloce dei relativi descrittori. Diminuzione complessiva di numero di outlier, da considerarsi anche i punti appartenenti all'area dentale ma esterni all'area di ricerca relativa all'immagine di query.\\
+Lo scopo delle valutazioni successive, è apportare migliorie al sistema al fine di aumentare i valori di accuracy registrati.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Problema del singolo match}
+Finora è stata valutata l'accuratezza nei modelli di matching a singola immagine di query. \\
+E' però opportuno anche considerare il caso in cui il sistema possa essere utilizzato nella sua interezza. Infatti, una possibile futura applicazione potrebbe essere quella di fornire in input tutte e tre le immagini di bitewing e valutare così la combinazione dei singoli risultati al fine di individuare l'immagine di match con maggior valore di score totale.\\
+Al fine di ottemperare questo obiettivo, è opportuno ideare un opportuno sistema che combini tutte e tre le precedenti valutazioni di match.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Unione di match}
+Un ulteriore utilizzo del sistema, è quello di effettuare la ricerca del miglior match, all'interno del dataset di ortopanoramiche, fornendo in ingresso le tre immagini di bitewing contemporaneamente. I risultati parziali di match, andranno quindi ad unirsi per produrre un risultato più consistente e completo.\\
+A questo scopo, è stato definito un algoritmo che effttua la detta computazione.\\
+E' stato realizzato perciò un sistema che, similmente a prima, esegue il processo di Feature Matching su tutte le immagini di bitewing e, rispettivamente, restituisce un dictionary contenente, per ciascuna immagine, la lista dei migliori {\itshape n} match con relativi score. La funzione per ottenere questo è {\itshape total\_matches}.\\
+Nel dettaglio:
+\begin{itemize}
+\item Viene effettuato il processo di estrazione delle feature e ricerca dei migliori match.
+\item I risultati, vengono accumulati in un dictionary composto da tante chiavi quante sono le immagini di query e per ciascuna, memorizza una lista con i migliori  {\itshape n} match e i relativi score.
+\end{itemize}
+Una volta ottenuti questi risultati, il cuore di questa fase del progetto, consiste nell' unire i risultati parziali al fine di definire un risultato globale più completo e robusto.\\
+Questo processo prevede diverse fasi:
+\begin{enumerate}
+\item {\itshape def merge}: fusione ordinata di tre liste di corrispondenze.
+\begin{itemize}
+\item In primo luogo, viene effettuato l'ordinamento dei 3 dictonary. Questa fase è fondamentale al fine di garantire che tutti e tre i dictionary abbiano le chiavi nello stesso ordine. L'idea, infatti, è quella di fornire in input 3 immagini parziali della stessa persona e simultaneamente. Ordinandole, viene garantito che i diversi pazienti vengano valutati con tutte e tre le immagini parziali per volta.
+\item Successivamente viene effettuata l'unione dei risultati ottenuti. Si itera all'interno di un ciclo for sulla prima lista ordinata. Per ogni immagine, l'algoritmo concatena i corrispondenti dati di matches provenienti dalle tre liste (frontale, dx, sx) in corrispondenza dello stesso indice nella lista.
+\item Si estrae il nome dell'immagine usando e si crea un nuovo identificativo concatenando la stringa "P\_" con il numero identificativo del paziente.
+\item In output, viene resituita una lista sottoforma di dizionario, contenente tutti i dati relativi ai tre match, ragruppati e ordinati per paziente. 
+\end{itemize}
+
+\item {\itshape def sum\_matches}: somma e aggregazione delle corrispondenze.
+\begin{itemize}
+
+\begin{figure}[H]
+	\centering
+    	\lstinputlisting[language=Python,label={lst:unionofmatches}]{listings/summatches.py}
+\end{figure} 
+
+\item Viene presa in input la lista restituita dalla funzione definita nel punto precedente.
+\item Viene creato un dizionario in cui, in corrispondenza di ogni indice (immagine), viene valutata la lista di matches registrati. Se un'immagine è presente più di una volta, vengono sommati i relativi score e aggiornato il valore corrispondente a quello già esistente.
+\item Al termine, il dizionario viene ordinato in base agli score dei matches ottenuti per ogni immagine, in ordine decrescente, e restituito come una lista di tuple.
+\end{itemize}
+
+\item A questo punto, viene valutata l'accuracy dei risultati ottenuti.
+\begin{figure}[H]
+	\centering
+	\hspace{-1cm}
+	\includegraphics[width=17cm]{figures/3match.pdf}
+    	\caption{Accuracy dell'unione dei 3 match}
+	\label{fig:3matches}
+\end{figure}
+\end{enumerate}
+
+Nei processi di fusione dei dati, è normale che l'accuratezza diminuisca dopo aver unito i risultati di match parziali, soprattutto se le corrispondenze provengono da fonti diverse (come nel caso delle diverse prospettive "frontal", "dx", "sx"). Una posibile valutazione potrebbe essere quella di ponderare i risultati ottenuti dai singoli match, considerando il fatto che i match calcolati per le immagini frontali sono più accurati rispetto a quelli laterali.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Ottimizzazioni}
+\section{Ottimizzazione algoritmo di Masking}
+I risultati che sono stati ottenuti non sono conformi con quanto aspettato. All'aumentare del livello di precisione dell'algoritmo di matching, i risultati peggiorano molto in termini di accuracy. Questo fa presumere che ci sia un errore durante il processo di definizione algoritmico.\\
+
+Analizzando, perciò, le maschere binarie generate dalla rete GAN, è possibile constatare come questa rete generativa non riesca a catturare, nella quasi totalità dei casi, la presenza di alcuni denti, in particolare, i "denti del giudizio".\\
+Questa mancanza causa errori di matching soprattutto durante le operazioni di interrogazioni delle immagini di bitewing laterale.\\
+Viene perciò definito, un secondo algoritmo di masking.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{U-Net Model}
+Viene definita una nuova rete, secondo il modello \textbf{U-Net}.\\
+\textbf{U-Net} è una rete neurale convoluzionale (CNN) progettata per compiti di Semantic Segmentation, particolarmente efficace in ambito medico. Nello specifico, è molto usata per segmentare immagini radiografiche, dove è importante identificare strutture anatomiche precise. \\
+La rete U-Net nasce per compiti di segmentazione di immagini biomediche con una struttura "a U"; essa è composta da un percorso di contrazione e uno di espansione, che permettono di catturare sia i dettagli locali sia il contesto più ampio delle immagini.
+\begin{figure}[H]
+	\hspace{-2cm}
+	\includegraphics[height=10cm,width=18cm]{figures/ArchitectureUnet.pdf}
+    	\caption{Architettura della rete U-Net}
+	\label{fig:unet}
+\end{figure}
+Essa è caratterizzata, dunque, da due fasi principali:
+\begin{enumerate}
+\item \textbf{Encoder} (Contrazione): La parte sinistra della rete si occupa di estrarre caratteristiche dell’immagine, riducendo progressivamente le dimensioni spaziali dell’immagine; contemporaneamente aumenta la profondità, permettendo alla rete di catturare caratteristiche complesse.
+\item \textbf{Decoder} (Espansione): La parte destra espande le caratteristiche apprese, ripristinando la risoluzione spaziale originaria per produrre una mappa di segmentazione che corrisponde alle dimensioni dell’immagine iniziale. Utilizza anche operazioni di concatenazione (skip connections) con i livelli dell'encoder per preservare dettagli locali.
+\end{enumerate}
+
+\textbf{Bottleneck}: Il livello centrale della U-Net funge da "collo di bottiglia", con lo scopo di concentrarsi sui tratti più distintivi e salienti dell’immagine.
+
+L'algoritmo di definizione della maschere segue i seguenti passi implementativi principali:
+\begin{enumerate}
+\item \textbf{Definizione della U-Net}:\\
+Viene definita una funzione UNET con dropout e batch normalization; è composta da:
+\begin{itemize}
+\item Encoder: la parte di compressione con livelli convoluzionali e pooling per catturare le caratteristiche dell'immagine.
+\item Bottleneck: livello centrale per astrarre le caratteristiche principali.
+\item Decoder: espande le caratteristiche per ripristinare la dimensione originale, utilizza le skip connections dal percorso encoder per migliorare la segmentazione.
+\end{itemize}
+\begin{figure}[H]
+    \centering
+    \lstinputlisting[language=Python,label={lst:unetarchitecture}]{listings/unet.py}
+\end{figure}
+\item \textbf{Preprocessamento delle Immagini}:\\
+La funzione {\itshape pre\_images }carica e ridimensiona le immagini, in particolare: converte in un unico canale (alcune immagini, pur essendo in scala di grigi, possono avere 3 canali); ridimensiona;; concatena. Tutte le immagini vengono ridimensionate a (512, 512), convertite in array e concatenate in un array tridimensionale.
+\item \textbf{Incremento dei Dati con Albumentations}:\\
+Sono applicati vari tipi di {\itshape data augmentation} sui dati (rotazione, ridimensionamento casuale, rumore gaussiano, sfocatura, e riflessione orizzontale) per migliorare la generalizzazione del modello.Il processo viene ripetuto per 4 volte al fine di creare nuove varianti dei dati di addestramento, migliorando la robustezza del modello.
+\item \textbf{Addestramento del Modello}:
+Fase di Compilazione e Fit: il modello è compilato con binary\_crossentropy e addestrato per 200 epoche, con un batch size di 8. Questo processo minimizza la perdita e ottimizza l'accuratezza su immagini binarie (denti o non denti).
+\item \textbf{Predizione e Analisi}:
+\begin{itemize}
+\item Predizione della Maschera: \textbf{model.predict} genera le maschere segmentate per le immagini di test.
+\item Sovrapposizione dei Contorni: con \textbf{cv2.findContours}, trova i contorni della maschera predetta e li disegna sull'immagine originale per visualizzare la segmentazione.
+\end{itemize}
+\item \textbf{Analisi CCA (Connected Component Analysis)}:\\
+La funzione CCA\_Analysis viene utilizzata per l'analisi delle componenti connesse su immagini binarie, contando i denti e segmentando le componenti connesse, identificando ogni dente in modo individuale.
+\end{enumerate}
+
+\subsection{Metriche di Valutazione}
+Dopo la fase di training e validation, l'algoritmo viene valutato su un set di dati di test nuovi; le metriche così ottenute sono molto buone:
+\begin{itemize}
+\item Accuracy: 0.92
+\item Loss: 0.03
+\end{itemize}
+
+\subsection{Applicazione delle maschere}
+L'algoritmo restituisce in output delle maschere che, confrontate alle precedenti, risutano più ampie e permissive, ricoprendo una zona più estesa dell'area dentale.
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+	\centering
+    	\includegraphics[width=8cm]{figures/opt\_1\_first.pdf}
+    	\caption{Primo Algoritmo di Masking}
+    	\label{lab:Maschera 2 opt1}
+    \end{minipage}\hfill
+    \begin{minipage}{0.45\textwidth}
+    	\centering
+    	\includegraphics[width=8cm]{figures/opt\_1\_second.pdf}
+    	\caption{Secondo Algoritmo di Masking}
+    	\label{lab:Maschera 1 opt1}
+    \end{minipage}\hfill
+\end{figure}
+
+Utilizzando questa nuova estrazione di maschere binarie possono essere ripetute le esecuzioni degli algoritmi definiti in precedenza.\\
+
+\begin{itemize}
+\item \textbf{Matching sull'intera Maschera}\\
+Viene eseguito, in prima istanza, l'algoritmo SIFT per l'estrazione dei keypoint sulle immagini ortopanoramiche, con l'applicazione della nuova maschera binaria al fine di identificare la regione di interesse corrispondente all'intera arcata dentale. Il match, poi, verrà effettuato tra le immagini di bitewing fornite in input e i descrittori dei keypoint delle ortopanoramiche così definiti.\\
+I risultati così ottenuti sono riportati di seguito:
+\begin{figure}[H]
+	\centering
+	\includegraphics{figures/frontal4.pdf}
+   	\caption{Accuracy Frontal Matching con U-Net}
+	\label{fig:frontal4}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics{figures/dx4.pdf}
+    	\caption{Accuracy BTW DX Matching con U-Net}
+	\label{fig:dx4}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics{figures/sx4.pdf}
+    	\caption{Accuracy BTW SX Matching con U-Net}
+	\label{fig:sx4}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics{figures/tempi4.pdf}
+    	\caption{Tempi di esecuzione con U-Net}
+	\label{fig:tempi4}
+\end{figure}
+Confrontando questi risultati con quelli ottenuti in precedenza per la stessa applicazione ma attraverso un diverso algoritmo di generazione delle maschere, è possibile vedere chiaramente come questi risultati presentino valori di accuracy molto più elevati! A dimostrazione del fatto che la definizione dell'area di ricerca è il primo passo più importante nella realizzazione del progetto.
+\item \textbf{Matching su una porzione della Maschera}\\
+Viene ora rieseguito l'algoritmo di restringimento della RoI, che identifica una zona di match più precisa andando a individuare la zona della maschera corrispondente all'area corretta di interrogazione, rispettivamente per i match delle immagini di bitewing frontali e laterali (destra e sinistra).\\
+I risultati ottenuti sono i seguenti:
+\begin{figure}[H]
+	\centering
+	\includegraphics{figures/frontal5.pdf}
+   	\caption{Accuracy Frontal Matching con RoI e U-Net}
+	\label{fig:frontal5}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics{figures/dx5.pdf}
+    	\caption{Accuracy BTW DX Matching con RoI e U-Net}
+	\label{fig:dx5}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics{figures/sx5.pdf}
+    	\caption{Accuracy BTW SX Matching con RoI e U-Net}
+	\label{fig:sx5}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics{figures/tempi5.pdf}
+    	\caption{Tempi di esecuzione con RoI e U-Net}
+	\label{fig:tempi5}
+\end{figure}
+\end{itemize}
+I valori di accuracy sono molto migliori rispetto allo studio precedente, soprattutto per il matching delle immagini frontali che è quasi perfetto già sui valori di Rank@1. Nonostante questo, però, i valori di accuracy con l'esecuzione di questo algoritmo peggiorano rispetto alla stessa valutazione effettuata con l'intera maschera binaria applicata all'immagine ortopanoramica. Questo risultato non è conforme a quanto atteso, siccome l'algoritmo dovrebbe essere più preciso.
+
+\subsection{Analisi degli errori di Match}
+Si analizzano, perciò, gli errori di match riscontrati nell'esecuzione degli algoritmi di ricerca per le immagini di Bitewing laterali.\\
+In figura vengono riportati alcuni errori di esecuzione dell'algoritmo SIFT:
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=15cm]{figures/matcherr.pdf}
+   	\caption{Errore di Matching per BTW SX}
+	\label{fig:matcherr}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=15cm]{figures/matcherr2.pdf}
+    	\caption{Errore di Matching per BTW SX}
+	\label{fig:matcherr2}
+\end{figure}
+
+Da queste immagini, evince che l'area di ricerca dei keypoint presenta alcuni errori.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Dilatazione delle Maschere}
+In computer vision, i \textbf{keypoint} rappresentano punti di interesse significativi all'interno di un'immagine, spesso rappresentati come coordinate (x, y). Vengono utilizzati per descrivere e riconoscere le caratteristiche distintive di un'immagine, come bordi, angoli o altri dettagli salienti, che possono risultare utili al fine di identificare, tracciare o confrontare oggetti nelle immagini.\\
+
+Il compito delle maschere è quello di delimitare le aree di ricerca. Così facendo, però, delimitano le aree di ricerca alla sola area dentale. I keypoint più significativi per questo studio si trovano però proprio nei punti di congiunzione tra due denti, come nei bordi, nelle giunture mandibolari, dalle sovrapposizioni. Le maschere escludono queste zone, concentrandosi invece prettamente nell'area di occupazione del singolo dente.\\
+
+Al fine di contrastare questo problema, la soluzione adottata è quella di \textbf{Dilatazione delle maschere}.
+\begin{figure}[H]
+    \centering
+    \lstinputlisting[language=Python,label={lst:dilation}]{listings/dilation.py}
+\end{figure}
+
+Questo codice esegue un'operazione di dilatazione su un'immagine in scala di grigi, in particolare:
+\begin{itemize}
+\item \textbf{def dilatate\_mask}:\\
+\begin{itemize}
+\item Riceve un'immagine (la maschera) e una dimensione di dilatazione in input.
+\item Crea un kernel (una matrice di valori pari a 1), della dimensione specificata, al fine di controllare la dilatazione.
+\item Usa la funzione \textbf{cv2.dilate()} di OpenCV per eseguire l'operazione di dilatazione sull'immagine; espande le aree chiare (i pixel con valori elevati) attorno ai bordi dell'oggetto.
+\item Infine, restituisce l'immagine dilatata.
+\end{itemize}
+\item \textbf{def apply\_mask\_dilatated\_crop}:
+\begin{itemize}
+\item Legge l'immagine (maschera) in scala di grigi con il parametro cv2.IMREAD\_GRAYSCALE.
+\item Passa l'immagine alla funzione dilatate\_mask al fine di ottenerne la versione dilatata.
+\item Salva l'immagine dilatata nel percorso di output specificato.
+\end{itemize}
+\end{itemize}
+
+L'operazione di dilatazione espande le aree di pixel chiari dell'immagine, al fine di:
+\begin{itemize}
+\item Riempire piccoli buchi nella maschera.
+\item Connettere parti disgiunte di oggetti contigui.
+\item Aumentare l'area di ricerca descritta dalla maschera, includendo aree di confine come i bordi.
+\end{itemize}
+
+Il risultato di questa operazione è un'immagine più ampia e conseguentemente un'area di ricerca maggiore.
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+	\centering
+    	\includegraphics[width=8cm]{figures/maskoriginal.pdf}
+    	\caption{Maschera originale}
+    	\label{lab:Maschera Originale}
+    \end{minipage}\hfill
+    \begin{minipage}{0.45\textwidth}
+    	\centering
+    	\includegraphics[width=8cm]{figures/maskdilated.pdf}
+    	\caption{Maschera dilatata}
+    	\label{lab:Maschera dilatata}
+    \end{minipage}\hfill
+\end{figure}
+
+Eseguendo l'algoritmo di matching con applicazione dell'intera maschera dilatata, i risultati di accuracy per le immagini di bitewing sinistro sono i seguenti:
+\begin{figure}[H]
+	\centering
+	\includegraphics{figures/sx6.pdf}
+    	\caption{Accuracy BTW SX Matching Dilated}
+	\label{fig:sx6}
+\end{figure}
+I risultati sono peggiorati rispetto alla stessa valutazione effettuata su una maschera non dilatata.\\
+
+Analizzando, però, nel dettaglio gli errori commessi e come riportato precedentemente, il peggioramento è dovuto all'amplificazione di aree bianche, non appartenenti realmente alla RoI. Infatti, in alcuni casi la rete U-Net utilzzata per l'estrazione delle maschere, identifica anche piccole aree, non appartenenti all'arcata dentale. In seguito a questa operazione di dilatazione 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Post-processing delle maschere}
+Una rete UNet può occasionalmente catturare aree esterne vicine ai contorni della Regione di Interesse (RoI) a causa di challenges di precisione in corrispondenza dei bordi o a causa di leggeri sovrapposizioni nelle regioni segmentate.\\
+E' possibile però implementare alcune soluzioni utili a ignorare le aree esterne alla regione di interesse. Una di queste metodologie applica un'elaborazione Post-Processing sulle maschere. Il processo implementato segue due step principali:
+\begin{itemize}
+\item Definizione di una bounding box al fine di isolare solo l'area centrale di interesse, area in corrispondenza della quale è presente l'arcata dentale. Viene così ignorato tutto ciò che cade al di fuori di questa regione. Questo approccio è efficace se la RoI si trova costantemente in un'area prevedibile all'interno dell'immagine, come nel caso delle immagini ortopanoramiche.
+\begin{figure}[H]
+    \centering
+    \lstinputlisting[language=Python,label={lst:postprocessing}]{listings/postprocessing.py}
+\end{figure}
+Un esempio dei benefici introdotti è il seguente: 
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+	\centering
+    	\includegraphics[width=8cm]{figures/mask\_191.pdf}
+    	\caption{Maschera con imperfezioni}
+    	\label{lab:Maschera imperfetta}
+    \end{minipage}\hfill
+    \begin{minipage}{0.45\textwidth}
+    	\centering
+    	\includegraphics[width=8cm]{figures/mask\_191\_crop.pdf}
+    	\caption{Maschera con crop laterale}
+    	\label{lab:Maschera dilatata}
+    \end{minipage}\hfill
+\end{figure}
+\item L'output così prodotto elimina le aree bianche che sono state erroneamente identificate durante il processo di generazione delle maschere. Può però succedere, che alcune immagini presentino delle aree grigie erroneamente individuate al di fuori dell'arcata dentale e quindi non appartententi alla RoI. Viene perciò implementata una funzione che sfrutta la \textbf{Connected Component Analysis}. Questa tecnica identifica le regioni grigie e le filtra in base alla presenza nella loro prossimità di aree bianche. 
+\begin{enumerate}
+\item \textbf{Connected Component Analysis}: Identifica regioni continue nella maschera, classificandole come bianche, grigie o nere.
+\item \textbf{Proximity Filtering}: Per ogni regione grigia, controlla se tocca o è vicina ad una regione bianca. Se è isolata, quindi non vicina a una bianca, la rimuove settandola a nero.
+\end{enumerate}
+\begin{figure}[H]
+    \centering
+    \lstinputlisting[language=Python,label={lst:postprocessing2}]{listings/postprocessing2.py}
+\end{figure}
+E' possibile visualizzare un esempio di applicazione di seguito:
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.4\textwidth}
+	\centering
+    	\includegraphics[width=8cm,height=4cm]{figures/mask\_378.pdf}
+    	\caption{Maschera con zone grigie}
+    	\label{lab:Maschera grigia}
+    \end{minipage}\hfill
+    \begin{minipage}{0.4\textwidth}
+    	\centering
+    	\includegraphics[width=8cm,height=4cm]{figures/mask\_378\_crop.pdf}
+    	\caption{Maschera ottimizzata}
+    	\label{lab:Maschera ottimizzata}
+    \end{minipage}\hfill
+\end{figure}
+\end{itemize}
+
+Eseguendo, ora, l'algoritmo di match sull'intera maschera così filtrata, i risultati ottenuti sono:
+\begin{figure}[H]
+	\centering
+	\includegraphics{figures/sx7.pdf}
+    	\caption{Accuracy BTW SX Matching Dilated with Post-Processing}
+	\label{fig:sx6}
+\end{figure}
+
+I valori di accuracy sono ora molto migliorati, seppur ancora perfezionabili con ulteriori ottimizzazioni. Gli errori di matching che ora possono essere osservati, riguardano solo l'area di ricerca, che non si concentra solo sulla zona di interesse specifica dell'arcata dentale ma nella sua interezza. Vengono perciò applicate delle ottimizzazioni al processo di definizione delle RoI specifiche.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Definizione della RoI con Coordinate}
+L'algoritmo di restringimento delle RoI definito in precedenza funziona in generale, ma presenta alcune lacune.\\
+Per arcate dentali complete, o che presentano la zona di interesse ricercata, l'algoritmo delimita correttamente l'area di restringimento.\\
+Ma è importante evidenziare cosa succede quando queste condizioni non sono verificate. Di seguito viene mostrato un esempio:
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+	\centering
+    	\includegraphics[width=8cm]{figures/mask\_26.pdf}
+    	\caption{Maschera completa}
+    	\label{lab:Maschera completa}
+    \end{minipage}\hfill
+    \begin{minipage}{0.45\textwidth}
+    	\centering
+    	\includegraphics[width=8cm]{figures/mask\_26\_crop.pdf}
+    	\caption{Maschera con RoI SX}
+    	\label{lab:Maschera con RoI sx}
+    \end{minipage}\hfill
+\end{figure}
+ 
+L'esempio riportato, evidenzia chiaramente l'errore nella logica del calcolo. L'algoritmo, infatti identifica all'interno della maschera le zone a tonalità bianca ed effettua un sezionamento dell'area prelevando, in questo caso, solo una percentuale di quest'ultima che si trova alla sua sinistra. In questo modo, però, non considera la posizione spaziale dell'area individuata. Nella figura, si vede come viene mantenuta una seziona sinistra dell'area individuata, che però si trova nell'area a destra della maschera. L'algoritmo, in casi di maschere non complete o non contenenti l'area di interesse, non lavora correttamente; restituisce una maschera ridotta anche quando questa non dovrebbe esserci. Il motivo principale di questo errore, dunque, risiede nel fatto che l'algoritmo, così implementato, non considera in alcun modo le informazioni spaziali di collocamento dell'area bianca individuata.\\
+
+Viene, perciò, definito un nuovo algoritmo ottimizzato per l'estrazione delle RoI considerando le dipendenze con la posizione occupata all'interno dell'immagine e quindi alle coordinate.
+Al fine di contrastare questo problema, la soluzione adottata è quella di \textbf{Dilatazione delle maschere}.
+\begin{figure}[H]
+    \centering
+    \lstinputlisting[language=Python,label={lst:sxRoI}]{listings/sxroi.py}
+\end{figure}
+
+La funzione \textbf{detect\_left\_white\_region} serve a individuare e restituire le coordinate del riquadro che delimita la regione bianca presente nella porzione sinistra di un'immagine di input.
+\begin{itemize}
+\item Viene estratta dalla maschera binaria l'area bianca identificativa della zona dentale.
+\item Viene calcolato il punto di separazione per l'area sinistra dell'arcata dentale come coordinata x pari al 40\% della larghezza dell'intera immagine, partendo da sinistra. Questo punto delimiterà la linea di separazione tra la parte sinistra e destra dell'immagine.
+\item Viene effettuato il mascheramento della porzione destra, azzerando i pixel che appartengono all'area delimitata dalla coordinata x\_mid fino al bordo destro.
+\item Viene mantenuta intatta solo la parte sinistra.
+\item Viene effettuata la ricerca dei contorni nella parte sinistra; se nonvengono individuati significa che non sono presenti aree bianche in quella porzione dell'immagine e la funzione restituirà None.
+\item Restituisce le coordinate (x\_min, y\_min, x\_max, y\_max) che delimitano la nuova regione bianca individuata nella parte sinistra dell’immagine.
+\end{itemize}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Contribution}
+I suggest referencing stuff as follows: \cref{fig:random-image} or \Cref{fig:random-image}
+
+You may also put some code snippet (which is NOT float by default), eg: \cref{lst:random-code}.
+
+\lstinputlisting[float,language=Java,label={lst:random-code}]{listings/HelloWorld.java}
+
+\section{Fancy formulas here}
+
+%----------------------------------------------------------------------------------------
+% BIBLIOGRAPHY
+%----------------------------------------------------------------------------------------
+
+\backmatter
+
+\nocite{*} % Remove this as soon as you have the first citation
+
+\bibliographystyle{alpha}
+\bibliography{bibliography}
+
+\begin{acknowledgements} % this is optional
+Optional. Max 1 page.
+\end{acknowledgements}
+
+\end{document}
