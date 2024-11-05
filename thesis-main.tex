@@ -1,4 +1,5 @@
 \documentclass[12pt,a4paper,openright,twoside]{book}
+
 \usepackage[utf8]{inputenc}
 \usepackage{float}
 \usepackage{disi-thesis}
@@ -6,6 +7,7 @@
 \usepackage{notes}
 \usepackage{shortcuts}
 \usepackage{acronym}
+
 \hypersetup{
     hidelinks % Nasconde i cerchiati attorno ai link
 }
@@ -66,15 +68,15 @@ Optional. Max a few lines.
 
 Il progetto nasce da una stretta collaborazione tra il {\itshape Dipartimento di Ingegneria e Scienze Informatiche} di Cesena e il {\itshape Dipartimento dei Beni Culturali} di Ravenna. Questa iniziativa risponde a una specifica necessità del gruppo di ricerca interno al Dipartimento di Ravenna per applicazioni di analisi forense.\\
 
-Insieme a metodi consolidati come {\itshape impronte digitali} e {\itshape Dna}, i denti rappresentano uno strumento fondamentale per l'identificazione personale; infatti, ill’impronta dentale può risultare tanto efficace, se non più, di altri mezzi di riconoscimento.\\
+Insieme a metodi consolidati come {\itshape impronte digitali} e {\itshape Dna}, i denti rappresentano uno strumento fondamentale per l'identificazione personale; infatti, l’impronta dentale può risultare tanto efficace, se non più, di altri mezzi di riconoscimento.\\
 
-Il termine {\itshape Odontologia forense} comprende tutte le attività di antropologia forense peculiari dell’odontoiatria e trova applicazioni in vari ambiti, tra cui assume particolare rilevanza quello dell' {\itshape identificazione personale}. L’odontologo forense, avvalendosi della documentazione ante-mortem, può ottenere risultati di elevata precisione.\\
+Il termine {\itshape Odontologia forense} comprende tutte le attività di antropologia forense peculiari dell’odontoiatria e trova applicazioni in vari ambiti, tra cui assume particolare rilevanza quello dell'{\itshape identificazione personale}. L’odontologo forense, avvalendosi della documentazione ante-mortem, può ottenere risultati di elevata precisione.\\
 
 I denti cosituiscono, infatti, il tessuto più resistente dell’organismo umano e mantengono la loro morfologia invariata, eccetto in casi di usura, decalcificazione o fratture. Per questo motivo, l’odontologia forense assume una particolare importanza nel contesto dell’identificazione di resti scheletrizzati o in stato di decomposizione avanzata.\\
 
 Il Dipartimento dei Beni Culturali di Ravenna, in via sperimentale, conduce indagini su resti di corpi umani appartenenti a epoche storiche di cui rimangono solo pochi reperti scheletrici, con l’obiettivo primario di identificarli. La collaborazione con il Dipartimento di Ingegneria e Scienze Informatiche di Cesena è finalizzata proprio allo sviluppo di strumenti idonei a supportare tali attività.\\
 
-L'obiettivo del progetto è, dunque, realizzare un sistema avanzato che consenta ai ricercatori di Ravenna di identificare, in modo efficiente e intelligente, resti scheletrici tramite l'impronta dentale. Il sistema sarà in grado di confrontare immagini radiografiche dentali acquisite durante l’analisi con immagini presenti in un dataset specifico contenente documentazione odontologica preesistente, agevolando, facilitando e accelerando così il processo di identificazione.
+L'obiettivo del progetto è, dunque, realizzare un sistema avanzato che consenta ai ricercatori di Ravenna di identificare, in modo efficiente ed intelligente, resti scheletrici tramite l'impronta dentale. Il sistema sarà in grado di confrontare immagini radiografiche dentali acquisite durante l’analisi, con immagini presenti in un dataset specifico contenente documentazione odontologica preesistente, agevolando, facilitando e accelerando così il processo di identificazione.
 
 %\sidenote{Add sidenotes in this way. They are named after the author of the thesis}
 
@@ -83,7 +85,7 @@ L'obiettivo del progetto è, dunque, realizzare un sistema avanzato che consenta
 \section{Struttura del dataset}
 Il {\itshape Dipartimento dei Beni Culturali} di Ravenna, dalla cui collaborazione è nata l'idea del progetto, ha fornito, in forma totalmente anonima, un dataset contenente le immagini radiografiche da loro possedute; ogni radiografia si riferisce ad un corpo finalizzato allo studio di analisi forense. \\
 Il dataset fornito contiene immagini relative a 100 pazienti anonimi.\\
-Il {\itshape dataset}, per come è stato fornito, è suddiviso in subdirectory, ciascuna contenente la documentazione relativa ad un singolo paziente. Le singole persone sono identificate attraverso un valore intero crescente (es. "P\_5"). \\
+Il {\itshape dataset}, per come è stato fornito, è suddiviso in subdirectory, ciascuna contenente la documentazione relativa ad un singolo paziente. Ogni persona è identificata attraverso un valore numerico, intero, crescente e unico(es. "P\_5"). \\
 Ogni subdirectory presenta la medesima struttura: 
 \begin{itemize}
 \item Nome subdirectory: {\itshape P\_idNumber}
@@ -103,12 +105,12 @@ Ogni subdirectory presenta la medesima struttura:
     \label{fig:subdirectory}
 \end{figure}
 
-Il formato desiderato per ogni immagine contenuta, è il seguente:
+Il formato desiderato per ogni immagine memorizzata è il seguente:
 \begin{itemize}
-\item \textbf{OTP\_idNumber}: radiografia ortopanoramica
-\item \textbf{FRONTAL\_idNumber}: radiografia bitewing, frontale
-\item \textbf{BTW SX\_idNumber}: radiografia bitewing, della porzione sinistra dell' ortopanoramica
-\item \textbf{BTW DX\_idNumber}: radiografia bitewing, della porzione destra dell' ortopanoramica
+\item \textbf{OTP\_idNumber}: radiografia ortopanoramica.
+\item \textbf{FRONTAL\_idNumber}: radiografia di bitewing frontale.
+\item \textbf{BTW SX\_idNumber}: radiografia di bitewing della porzione sinistra dell'ortopanoramica.
+\item \textbf{BTW DX\_idNumber}: radiografia di bitewing della porzione destra dell'ortopanoramica.
 \end{itemize}
 
 \begin{figure}[H]
@@ -141,54 +143,56 @@ Il formato desiderato per ogni immagine contenuta, è il seguente:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Studio preliminare}
-Da un primo studio del dataset emerge immediatamente la non uniformità dei dati. Molte immagini, infatti, non ottemperano al pattern di struttura definito nella sezione precedente. I dati, così presentati, non sono sfruttabili per applicazioni intelligenti di Visioni Artificiale.\\
-Perciò, in un primo studio iniziale sono state mantenute {\itshape solo} le subdirectory le cui immagini risultassero conformi alla struttura.\\
+Da una prima analisi effettuata sul dataset, emerge immediatamente la non uniformità dei dati. Molte immagini, infatti, non ottemperano al pattern di struttura definito nella sezione precedente. I dati, così forniti, non sono sfruttabili per applicazioni intelligenti di Visione Artificiale.\\
+Al fine di effettuare uno studio preliminare di analisi dei dati, sono state mantenute {\itshape solo} le subdirectory le cui immagini risultassero conformi alla struttura dei dati richiesta.\\
 
 \subsection{Suddivisione del dataset}
-Il dataset utilizzato, quindi, in una prima fase, è un sottoinsieme dell'insieme di partenza; composto unicamente dal range di pazienti 61-100. Infatti, solo questi pazienti presentava ad una prima analisi, un formato comune di dati. I dati, infatti, risalgono a periodi di acquisizione e a modalità diverse; solo per questo sottoinsieme si poteva garantire una nomenclatura corretta alle immagini e un dato pulito in termini di: luminosità, distorsione, rotazione, prospettiva, dimensione e proporzione.
+Il dataset utilizzato nella fase preliminare, è definito come un sottoinsieme dell'insieme di partenza; composto unicamente dal range di pazienti 61-100. Infatti, solo questi pazienti presentano, in una prima analisi, un formato conforme dei dati. Questo a giustificazione del fatto, che i dati risalgono a periodi di acquisizione diversi e a modalità di acquisizione diverse; solo per questo sottoinsieme è posssibile garantire una nomenclatura corretta delle immagini, un formato conforme al pattern definito e un insieme di immagini "pulite" in termini di: luminosità, distorsione, rotazione, prospettiva, dimensione e proporzione.
 
 \subsection{Idea}
-L'idea per realizzare uno studio preliminare sui dati, è quella di implementare algoritmi di \textbf{Feature Detection and Matching}.\\
-L'algoritmo così implementato effettua i seguenti passaggi:
+Al fine di realizzare uno studio preliminare sui dati, vengono definiti e implementati alcuni algoritmi di \textbf{Feature Detection e Matching}.\\
+Questi algoritmi seguono i seguenti passaggi:
 \begin{enumerate}
 \item Estrazione dei \textbf{keypoint} dalle immagini ortopanoramiche (OPT).
 \item Estrazione dei \textbf{keypoint} dalle immagini parziali di bitewing (FRONTAL e BTW).
-\item Matching tra i due punti precedenti al fine dell'identificazione.
+\item Matching tra i \textbf{descrittori} dei keypoint individuati negli step precedenti.
 \end{enumerate}
 
-\section{Tipologie di Matching}
-\textbf{Feature Detection e Matching} è un task molto importante di molte applicazioni di computer vision, come structure-from-motion, image retrieval, object detection, e molto altro; è una tecnica fondamentale della computer vision che prevede l'identificazione e l'allineamento di feature corrispondenti in più immagini.\\
-Le \textbf{feature} si riferiscono a elementi distintivi di un'immagine, come bordi, angoli o blob, che possono essere rilevati e descritti in modo consistente. Attraverso il matching tra feature appartenenti a immagini distinte, i sistemi di computer vision sono in grado di riconoscere oggetti, tracciare movimenti, creare immagini panoramiche e ricostruire scene 3D da immagini 2D.\\
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Tipologie di Matching}
+Il processo di \textbf{Feature Detection e Matching} è un task molto importante di molte applicazioni di Computer Vision come: structure-from-motion, image retrieval, object detection, ecc. Essa consiste in una tecnica fondamentale che prevede l'identificazione e l'allineamento di feature corrispondenti in più immagini.\\
+Le \textbf{feature} si riferiscono a elementi distintivi di un'immagine, come  {\itshape bordi, angoli o blob}, che possono essere rilevati e descritti in modo consistente. Attraverso il matching tra feature, appartenenti a immagini distinte, i sistemi di Computer Vision sono in grado di riconoscere oggetti, tracciare movimenti, creare immagini panoramiche o ricostruire scene 3D da immagini 2D.\\
 
 Gli aspetti chiave del Feature Matching sono:
 \begin{enumerate}
 
 \item \textbf{Feature Detection}\\
-Il processo inizia con il rilevamento delle key features in ogni immagine. Queste feature sono tipicamente punti di interesse facili da distinguere, come angoli o bordi. Esistono diversi  sistemi di detection molto avanzati, come {\itshape Harris Corner Detector} o {\itshape Laplacian of Gaussian for blob detection}.
+Il processo inizia con il rilevamento delle key features all'interno di ogni immagine. Queste feature sono tipicamente punti di interesse facili da distinguere, come angoli o bordi. Esistono diversi  sistemi di detection molto avanzati, come {\itshape Harris Corner Detector} o {\itshape Laplacian of Gaussian for blob detection}.
 
 \item \textbf{Feature Description}\\
-Una volta che le features sono individuate, esse vengono descritte attraverso dei \textbf{feature descriptors}, i quali forniscono  una rappresentazione numerica delle caratteristiche della feature. I descrittori più diffusi sono {\itshape SIFT} (Scale-Invariant Feature Transform), {\itshape SURF} (Speeded Up Robust Features), ORB (Oriented FAST and Rotated BRIEF) e {\itshape BRIEF} (Binary Robust Independent Elementary Features).
+Una volta individuate le feature, esse vengono descritte attraverso dei \textbf{feature descriptors}, i quali forniscono una rappresentazione numerica delle caratteristiche della feature. I descrittori più diffusi sono {\itshape SIFT} (Scale-Invariant Feature Transform), {\itshape SURF} (Speeded Up Robust Features), ORB (Oriented FAST and Rotated BRIEF) e {\itshape BRIEF} (Binary Robust Independent Elementary Features).
 
 \item \textbf{Feature Matching}\\
-Lo step core consiste nel confrontare i descrittori di feature, appartenenti a immagini diverse, al fine di individuare le corrispondenze. \\
-Vengono comunemente utilizzate tecniche come: {\itshape brute-force matching}, in cui ogni feature viene confrontata con tutte le feature dell'altra immagine, o il  {\itshape K-Nearest Neighbors (KNN) matching}, in cui vengono identificate le corrispondenze più vicine.\\
+Lo step core consiste nel confrontare i descrittori di feature, appartenenti a immagini diverse, al fine di individuare le corrispondenze esistenti. \\
+Vengono comunemente utilizzate tecniche come: {\itshape brute-force matching}, in cui ogni feature viene confrontata con tutte le feature della seconda immagine, o il  {\itshape K-Nearest Neighbors (KNN) matching}, in cui vengono identificate le K corrispondenze più vicine.\\
 Metodi di matching più robusti, quali {\itshape RANSAC} (Random Sample Consensus) aiutano a ridurre il rumore e la presenza di outlier, al fine di migliorare l'accuracy del sistema.
 
 \end{enumerate}
 
 \subsection{Feature Description}
-L'operazione di {\itshape feature description} è uno step cruciale nel processo di feature matching, dove le feature individuate vengono rappresentate in una modalità tale da consentirne il confronto e il match rispetto a immagini differenti. I descrittori di feature forniscono una rappresentazione numerica o simbolica delle caratteristiche delle features, consentendo un'efficace identificazione e allineamento tra feature corrispondenti.\\
-I feature descriptors catturano l'aspetto locale intorno a una feature, in maniera invariante rispetto a diverse operazioni di trasformazione, quali la scala, la rotazione o i cambiamenti di illuminazione.\\
-Essi trasformano i valori dei pixel in prossimità della feature in un vettore compatto e di lunghezza definita che identifica in maniera univoca la feature.\\
+L'operazione di {\itshape feature description} è uno step cruciale nel processo di feature matching, dove le feature individuate vengono rappresentate in una modalità tale da consentirne il confronto e il match rispetto a immagini differenti.\\
+I descrittori di feature forniscono una {\itshape rappresentazione numerica o simbolica} delle caratteristiche delle features, consentendo un'efficace identificazione e allineamento tra feature corrispondenti.\\
+I feature descriptors catturano l'aspetto locale intorno ad una feature, in maniera \textbf{invariante} rispetto a diverse operazioni di trasformazione, quali scala, rotazione o cambiamenti di illuminazione a seconda di come essi vengono definiti.\\
+Essi trasformano i valori dei pixel in prossimità della feature in un {\itshape vettore compatto} e di {\itshape lunghezza definita} che identifica in maniera univoca la feature individuata.\\
 Questo vettore può essere, poi, utilizzato per confrontare e abbinare le feature tra le diverse immagini.\\
-I feature Descriptors più conosciuti e utilizzati sono:
+I feature descriptors più conosciuti e utilizzati sono:
 \begin{enumerate}
 
 \item \textbf{SIFT (Scale-Invariant Feature Transform)}\\
 SIFT genera un descrittore indipendente dalla scala e dalla rotazione; si occupa di identificare i keypoint dell'immagine a varie scale e orientamenti. Ogni keypoint è descritto da un vettore di 128 dimensioni che cattura la distribuzione dell'orientamento del gradiente intorno al keypoint.
 
 \item \textbf{SURF (Speeded Up Robust Features)}\\
-SURF è un'alternativa efficiente a SIFT, che utilizza un'immagine integrale per un calcolo più veloce dei vettori. Produce un descrittore robusto alla scala e alla rotazione, ma può essere calcolato più rapidamente di SIFT.
+SURF è un'alternativa efficiente a SIFT, che utilizza un'immagine integrale per un calcolo più veloce dei vettori. Produce un descrittore robusto alla scala e alla rotazione, ma può essere calcolato più rapidamente rispetto a SIFT.
 
 \item \textbf{ORB (Oriented FAST and Rotated BRIEF)}\\
 ORB combina il keypoint detector FAST con il descrittore BRIEF. Fornisce un descrittore binario che risulta efficiente da calcolare e da abbinare, il chè lo rende adatto ad ambienti con risorse limitate. ORB include anche l'invarianza di orientamento, calcolando l'orientamento di ciascun keypoint.
@@ -197,6 +201,7 @@ ORB combina il keypoint detector FAST con il descrittore BRIEF. Fornisce un desc
 BRIEF genera una stringa binaria confrontando le intensità di coppie di pixel intorno a un keypoint. È molto efficiente sia in termini di calcolo che in termini di memorizzazione, ma manca di robustezza ai cambiamenti di scala e di rotazione.
 \end{enumerate}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Feature Matching}
 L'operazione di {\itshape feature matching} comporta il confronto dei descrittori di feature allo scopo di individuare feature corrispondenti in immagini diverse. \\
 Per garantire una corrispondenza accurata ed efficiente, vengono impiegate diverse tecniche, tra cui:
@@ -213,16 +218,15 @@ Il Brute-Force Matcher confronta ogni descrittore di un'immagine con ogni descri
 \item {\itshape Svantaggi}: Costoso dal punto di vista computazionale, soprattutto per grandi insiemi di dati.
 \end{itemize}
 
-\item \textbf{K-Nearest Neighbors (KNN) Matching}
+\item \textbf{K-Nearest Neighbors (KNN) Matching}\\
 Il K-Nearest Neighbors Matching trova i k descrittori più vicini per ogni keypoint in base ad una metrica di distanza. In genere, si applica il \textbf{ratio test} per selezionare la migliore corrispondenza tra i k vicini.
 \begin{itemize}
 \item {\itshape Vantaggi}: Più efficiente della corrispondenza brute-force, consente una certa flessibilità nella selezione della corrispondenza migliore.
 \item {\itshape Svantaggi}: Ancora intensivo dal punto di vista computazionale per insiemi di dati molto grandi.
 \end{itemize}
 
-\item \textbf{ RANSAC (Random Sample Consensus)} per Robust Matching\\
-RANSAC è un metodo iterativo utilizzato per stimare i parametri di un modello matematico da un insieme di dati osservati che contengono outlier. Nel feature matching, RANSAC viene utilizzato per trovare un insieme robusto di corrispondenze selezionando ripetutamente sottoinsiemi casuali di corrispondenze e calcolando una trasformazione che allinei le immagini. Viene scelta la trasformazione con il maggior numero di valori anomali.
-
+\item \textbf{RANSAC (Random Sample Consensus)}\\
+Per Robust Matching, RANSAC è un metodo iterativo utilizzato per stimare i parametri di un modello matematico da un insieme di dati osservati che contengono outlier. Nel feature matching, RANSAC viene utilizzato per trovare un insieme robusto di corrispondenze selezionando ripetutamente sottoinsiemi casuali di corrispondenze e calcolando una trasformazione che allinei le immagini. Viene scelta la trasformazione con il maggior numero di valori anomali.
 \begin{itemize}
 \item {\itshape Vantaggi}: Robustezza agli outlier e al rumore, migliora l'accuratezza del feature matching.
 \item {\itshape Svantaggi}:  Intenso dal punto di vista computazionale, richiede un'attenta regolazione dei parametri.
@@ -230,57 +234,59 @@ RANSAC è un metodo iterativo utilizzato per stimare i parametri di un modello m
 
 \end{enumerate}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Template Matching}
-Un ulteriore studio che è stato effettuato è attraverso un altro metodo di Matching molto conosciuto, denominato \textbf{Template Matching}.\\
-Template Matching è una tecnica di alto livello, utilizzata in applicazioni di computer vision, che permette di individuare la posizione o le posizioni di un certo template fornito come immagine, all'interno di un'altra immagine più grande.\\
-Esisttono diversi algoritmi di template matching avanzati che permettono di individuare le occorrenze del template indipendentemente dall'orientazione o dalla luminosità locale.\\
+Nell'analisi preliminare, viene analizzato l'insieme di dati anche attraverso l'ausilio di un secondo metodo di Matching molto conosciuto, denominato \textbf{Template Matching}.\\
+Il Template Matching è una tecnica di alto livello, utilizzata in applicazioni di Computer Vision, al fine di individuare la posizione, o le posizioni, di un certo template fornito come immagine, all'interno di un'altra immagine più grande.\\
+Esistono diversi algoritmi di template matching avanzati che permettono di individuare le occorrenze del template indipendentemente dall'orientamento o dalla luminosità locale.\\
 Le tecniche di Template Matching sono flessibili e relativamente semplici da usare, il chè le rende uno dei metodi più popolari nei compiti di Object Detection.\\
 La loro applicabilità è limitata soprattutto dalla potenza di calcolo disponibile, poiché l'identificazione di modelli grandi e complessi può richiedere molto tempo.\\
-L'obiettivo, dunque, di questo modello è quello di individuare tutte le occorrenze e posizioni di un'immagine di riferimento (template) all'interno di un'altra immagine (immagine di input), indipendentemente dalla scala o dalla rotazione.\\
 
-Il modello utilizzato è {\itshape TM\_CCOEFF\_NORMED}, il quale lavora sull'intera immagine di query (OPT) e ricerca le occorrenze dell'immagine di bitewing fornita (BTW o FRONTAL).
-\begin{itemize}
-\item {\itshape Vantaggi}: E' un modello semplice e veloce.
-\item {\itshape Svantaggi}: Molto sensibile alla scala, alla rotazione e ad altre trasformazioni geometriche.
-\end{itemize}
-Essa calcola una matrice di matching come sovrapposizione rispetto all'immagine intera e determina i punti in cui si sovrappone meglio.
+L'obiettivo di questo modello è quello di individuare tutte le occorrenze e posizioni di un'immagine di riferimento (template) all'interno di un'altra immagine (immagine di input), indipendentemente dalla scala o dalla rotazione.\\
+
+Il modello utilizzato è  \textbf{TM\_CCOEFF\_NORMED}, il quale lavora sull'intera immagine di query (OPT) e ricerca le occorrenze dell'immagine di bitewing fornita (BTW o FRONTAL). E' un modello molto semplice e veloce.\\
+Quest'ultimo, calcola una matrice di matching come sovrapposizione rispetto all'immagine intera e determina i punti in cui si sovrappone meglio.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%5
-\section{Analisi Preliminare}
-Attraverso un primo studio sul sottoinsieme del dataset di partenza (P61-P100) è stato implementato un sistema di valutazione e di identificazione di immagini. Il processo presenta i seguenti passi:
-\begin{itemize}
-\item Estrazione di keypoint e feature descriptor nelle immagini ortopanoramiche (OPT).
-\item Estrazione di keypoint e feature descriptor nelle immagini parziali di bitewing (BTW e FRONTAL).
-\item Identificazione delle immagini parziali attraverso un meccanismo di matching con le ortopanoramiche.
-\end{itemize}
-Il processo, perciò, può essere così rappresentato:
-
+\chapter{Analisi Preliminare}
+Al fine di realizzare una prima analisi dei dati, in particolare sul sottoinsieme del dataset di partenza (P61-P100), viene implementato un sistema di valutazione e di identificazione di immagini. Vengono implementati due algoritmi: uno per il feature matching e il secondo per il template matching.\\
+Il primo processo segue diversi passi computazionali che possono essere così rappresentati:
 \begin{figure}[H]
 	\centering
 	\includegraphics[height=6cm,width=16cm]{figures/keypoint.pdf}
     	\caption{Feature Descriptors e Feature Matching}
 	\label{fig:keypointdescriptor}
 \end{figure}
+Ossia:
+\begin{itemize}
+\item Estrazione dei keypoint e definizione dei feature descriptor nelle immagini ortopanoramiche (OPT).
+\item Estrazione dei keypoint e definizione dei feature descriptor nelle immagini parziali di bitewing (BTW e FRONTAL).
+\item Feature Matching tra immagini ortopanoramiche e immagini di bitewing.
+\item Identificazione e riconoscimento delle immagini parziali.
+\end{itemize}
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[height=6cm,width=11cm]{figures/matchprof.pdf}
-    	\caption{Different Feature Matching}
+    	\caption{Insieme di Feature Matching}
 	\label{fig:featurematching}
 \end{figure}
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
 \subsection{Protocollo operativo}
-Lo schema di esecuzione seguito si basa sul confronto di una singola immagine di query, immagine di bitewing, con tutte le immagini ortopanoramiche, in questo caso 40.\\
-Ai fini di valutare l'accuratezza del sistema, si sono utilizzati tre metriche, definite come:
+Lo schema di esecuzione dell'algoritmo di matching si basa sul confronto di una singola immagine di query, immagine di bitewing, con tutte le immagini ortopanoramiche presenti nel dataset, in questo caso 40.\\
+Ai fini della valutazione dell'accuratezza del sistema, vengono studiate e analizzate tre metriche, definite come:
 \begin{itemize}
-\item \textbf{Rank@1}: il match corretto è nella prima posizione.
-\item \textbf{Rank@2}: il match corretto è entro le prime due posizioni.
-\item \textbf{Rank@5}: il match corretto è entro le prime cinque posizioni.
+\item \textbf{Rank@1}: il match corretto si trova nella prima posizione.
+\item \textbf{Rank@2}: il match corretto si trova entro le prime due posizioni.
+\item \textbf{Rank@5}: il match corretto si trova entro le prime cinque posizioni.
 \end{itemize}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
 \subsection{Risultati ottenuti}
-I risultati ottenuti da questa prima valutazione sono molto buoni, essi infatti presentano dei valori altamente competitivi in termini di accuracy anche a livello di Rank@1.\\
-Per il matching delle immagini di bitewing frontali (FRONTAL), i risultati ottenuti sono i seguenti:
+I risultati ottenuti attraverso questa prima valutazione, sono molto buoni; essi, infatti, presentano valori altamente competitivi in termini di accuracy anche a livello di Rank@1.\\
+Dal matching delle immagini di bitewing frontali (FRONTAL), i risultati ottenuti sono i seguenti:
 
 \begin{figure}[H]
 	\centering
@@ -289,8 +295,8 @@ Per il matching delle immagini di bitewing frontali (FRONTAL), i risultati otten
 	\label{fig:frontalprof}
 \end{figure}
 
-Nella rappresentazione riportata, si può vedere l'ottimalità dei risultati ottenuti, soprattutto quando si utilizzano keypoint SIFT, i quali, infatti, sono per definizione più precisi. \\
-Anche per il match di immagini di Bitewing laterali, si ottengono risultati molto buoni:
+Nella tabella sopra riportata, è possibile vedere l'ottimalità dei risultati ottenuti, soprattutto quando si utilizzano i keypoint SIFT, i quali, infatti, sono per definizione più precisi. \\
+Dal match di immagini di Bitewing laterali, si ottengono, similmente, risultati molto buoni:
 \begin{figure}[H]
 	\centering
 	\includegraphics[height=5cm,width=15cm]{figures/dxprof.pdf}
@@ -304,7 +310,8 @@ Anche per il match di immagini di Bitewing laterali, si ottengono risultati molt
 	\label{fig:sxprof}
 \end{figure}
 
-Per le immagini laterali si può vedere come l'accuratezza decresca a causa del problema intrinseco delle immagini laterali del cambiamento di prospettiva. Alcuni keypoint sono robusti a questo problema, ma un'ulteriore miglioria potrebbe essere apportata definendo dei meccanismi di supporto per interagire con questo tipo di problema. 
+Dai risultati ottenuti dal match delle immagini laterali si può osservare come l'accuratezza decresca a causa del problema intrinseco legato alla tipologia delle immagini stesse, rispetto al cambiamento di prospettiva. Alcuni keypoint sono, però, robusti a fronte di questa tipologia di problema.\\
+Un'ulteriore miglioria apportabile, potrebbe essere quella di definire dei meccanismi di supporto per gestire con questo tipo di problema. 
 
 \subsection{Tempi di esecuzione}
 I tempi di esecuzione ottenuti dai diversi algoritmi di matching sono i seguenti:
@@ -315,7 +322,7 @@ I tempi di esecuzione ottenuti dai diversi algoritmi di matching sono i seguenti
 	\label{fig:tempiprof}
 \end{figure}
 
-Nonostante la dimensionalità molto bassa del database (solo 40 pazienti) i tempi di esecuzione richiesti non sono propriamente bassi, infatti, soprattutto con il keypoint SIFT è richiesto un tempo di processamento per ogni singolo match di circa 10s.\\
+Nonostante la dimensionalità molto bassa del database (solo 40 pazienti) i tempi di esecuzione richiesti non sono propriamente bassi; infatti, soprattutto con il keypoint SIFT è richiesto un tempo di processamento per ogni singolo match di circa 10s.\\
 Feature ORB è il metodo di match con tempi di esecuzione più bassi, ma risultati di match peggiori.
 
 
@@ -332,16 +339,27 @@ Il progetto così strutturato, presenta diverse limitazioni, tra cui:
 \item Nessuna valutazione sul cambiamento nel tempo della confrormazione dell'impronta dentale, sistema non robusto.
 \item Dataset  "semplice", non presenta alcun problema di scala
 \end{itemize}
-Dalle conclusioni ottenute dalla prima trattazione del problema è emerso che ogni soluzione proposta, presenta aspetti positivi e aspetti negativi:
+Dalle conclusioni ottenute dalla prima trattazione del problema, emerge che ogni soluzione proposta, presenta sia aspetti positivi, che aspetti negativi da trattare. In particolare:
 \begin{itemize}
 \item \textbf{ORB}: richiede un tempo di esecuzione minore, ma offre risultati di matching peggiori.
 \item \textbf{Template Match}: richiede un tempo intermedio e offre risultati intermedi.
 \item \textbf{SIFT}: notevolmente più lento, ma offre risultati molto migliori.
 \end{itemize}
-Attraverso questo progetto viene affrontato il problema, allo scopo di realizzare una soluzione il più robusta, generale e applicabile possibile.
+Nei seguenti step del progetto, viene affrontato il problema, allo scopo di realizzare una soluzione il più robusta, generale e applicabile possibile.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Aumento della cardinalità del dataset}
+Il {\itshape Dipartimento dei Beni Culturali} di Ravenna, dalla cui collaborazione è nata l'idea dello studio, ha fornito, in forma totalmente anonima, il dataset contenente le immagini radiografiche da loro posseduto; ogni radiografia si riferisce ad un corpo di analisi forense. \\
+Il dataset fornito contiene immagini relative a 100 pazienti anonimi. Purtroppo, però, il dataset così presentato non è utilizzabile per uno studio in ambito di Visione Artificiale; gli algoritmi di questa disciplina richiedono formalismi e rigori che i dati nativamente non presentavano.\\
+
+Il primo studio che è stato effettuato su questi dati, ha ristretto l'utilizzo delle immagini solo ai pazienti appartenenti alla sottodirectory {\itshape 61-100} poichè formalizzati secondo la struttura desiderata.\\
+Al fine di realizzare un sistema il più robusto e generico possibile, però, la cardinalità del dataset è incompatibile con la cardinalità richiesta in sistemi di computer vision.\\
+E' fondamentale, perciò, per una corretta realizzazione di un sistema robusto di {\itshape Human Tooth Identification}, accrescere il dataset per aumentarne la complessità, generalizzazione e applicabilità.\\
+I passi presentati di seguito sono stati fondamentali al fine di ottemperare questo obiettivo.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Il problema della cardinalità}
+\section{Il problema della cardinalità}
 La cardinalità di un dataset, ovvero il numero di elementi unici o distinti presenti, ha un impatto significativo sull'applicabilità degli algoritmi di computer vision. La bassa cardinalità può influenzare vari aspetti, come la capacità del modello di generalizzare, il rischio di overfitting e le prestazioni complessive del sistema.\\
 In particolare: 
 \begin{itemize}
@@ -358,17 +376,8 @@ Gli algoritmi di deep learning, come le reti neurali convoluzionali (CNN), richi
 Una bassa cardinalità potrebbe anche portare a problemi di distorsioni statistiche, soprattutto se alcune classi o categorie sono molto poco rappresentate rispetto ad altre (squilibrio del dataset). In questo caso, il modello potrebbe essere sbilanciato, favorendo le classi più rappresentate e ignorando quelle meno presenti.
 \end{itemize}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Aumento della cardinalità del dataset}
-Il {\itshape Dipartimento dei Beni Culturali} di Ravenna, dalla cui collaborazione è nata l'idea dello studio, ha fornito, in forma totalmente anonima, il dataset contenente le immagini radiografiche da loro posseduto; ogni radiografia si riferisce ad un corpo di analisi forense. \\
-Il dataset fornito contiene immagini relative a 100 pazienti anonimi. Purtroppo, però, il dataset così presentato non è utilizzabile per uno studio in ambito di Visione Artificiale; gli algoritmi di questa disciplina richiedono formalismi e rigori che i dati nativamente non presentavano.\\
 
-Il primo studio che è stato effettuato su questi dati, ha ristretto l'utilizzo delle immagini solo ai pazienti appartenenti alla sottodirectory {\itshape 61-100} poichè formalizzati secondo la struttura desiderata.\\
-Al fine di realizzare un sistema il più robusto e generico possibile, però, la cardinalità del dataset è incompatibile con la cardinalità richiesta in sistemi di computer vision.\\
-E' fondamentale, perciò, per una corretta realizzazione di un sistema robusto di {\itshape Human Tooth Identification}, accrescere il dataset per aumentarne la complessità, generalizzazione e applicabilità.\\
-I passi presentati di seguito sono stati fondamentali al fine di ottemperare questo obiettivo.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \section{Pre-processing del dataset}
 In prima istanza, è stato perciò indispensabile, al fine di \textbf{accrescere la cardinalità del dataset}, standardizzare le immagini fornite dal dipartimento.\\
 Il primo passo, dunque, è definire la \textbf{struttura} del dataset desiderata.
@@ -1674,7 +1683,7 @@ I valori di accuracy sono ora molto migliorati, seppur ancora perfezionabili con
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Definizione della RoI con Coordinate}
+\section{Definizione della RoI con Coordinate}
 L'algoritmo di restringimento delle RoI definito in precedenza funziona in generale, ma presenta alcune lacune.\\
 Per arcate dentali complete, o che presentano la zona di interesse ricercata, l'algoritmo delimita correttamente l'area di restringimento.\\
 Ma è importante evidenziare cosa succede quando queste condizioni non sono verificate. Di seguito viene mostrato un esempio:
@@ -1713,6 +1722,98 @@ La funzione \textbf{detect\_left\_white\_region} serve a individuare e restituir
 \item Restituisce le coordinate (x\_min, y\_min, x\_max, y\_max) che delimitano la nuova regione bianca individuata nella parte sinistra dell’immagine.
 \end{itemize}
 
+L'algoritmo di Matching con SIFT così definito, è molto accurato. E' stato implementato similmente anche per le valutazioni sulle immagini di bitewing di bitewing destro e per le immagini frontali. A questo scopo, sono state definite rispettivamente le funzioni:
+\begin{itemize}
+\item \textbf{detect\_right\_white\_region}:
+\begin{itemize}
+\item Simile alla logica analizzata precedentemente, ma calcola il punto di divisione (approssimativamente ai 3/5 della larghezza, parti circa al 60\%) della parte destra dell'immagine.
+\item Applica una maschera nella porzione sinistra rispetto al punto, impostando i valori a zero (nero), così da isolare e mantenere solo l'area a destra dell'immagine.
+\item Ricerca i contorni nella maschera della porzione destra, i quali rappresentano le aree bianche contigue. Se sono presenti, la funzione ritorna le coordinate del rettangolo di delimitazione della data area; viceversa, la funzione restituisce None.
+\end{itemize}
+\item \textbf{detect\_frontal\_white\_region}:
+\begin{itemize}
+\item Calcola due punti di divisione. A partire dal punto medio dell'immagine, definisce i limiti x\_min e x\_max in modo che la regione centrale copra circa il 20\% della larghezza totale dell'immagine (± 10\% dal centro).
+\item Imposta a zero (nero) le aree a sinistra di x\_min e a destra di x\_max nella maschera binaria, isolando, quindi, solo la regione centrale.
+\item Rileva i contorni nella maschera della parte centrale, che rappresentano le aree bianche contigue. Se non trova contorni, restituisce None; viceversa, restituisce le coordinate del rettangolo che racchiude tale regione.
+\end{itemize}
+\end{itemize}
+
+I risultati di accuracy ottenuti attraverso l'ausilio delle predette migliorie sono i seguenti:
+\begin{figure}[H]
+	\centering
+	\includegraphics{figures/sx8.pdf}
+    	\caption{Accuracy BTW SX Matching con coordinate}
+	\label{fig:sx8}
+\end{figure}
+Seppur migliorati, presentano ancora risultati non ottimi soprattutto per i valori di Rank@1.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Modifica del Ratio test}
+Dall'osservazione diretta di match individuati, è possibile osservare come la maggior parte di essi appaiano molto vicini l'un l'altro e molto simili tra loro. Molto descrittori, infatti, vengono mappati nello stesso punto di match nell'immagine ortopanoramica corrispondente. Questo problema si manifesta a causa del valore selezionato per il Ratio Test. \\
+Nel contesto del feature matching, il Ratio Test è applicato dopo aver individuato i keypoints, nelle due immagini, e aver estratto i loro descrittori. Durante il processo di matching, per ogni descrittore, appartemente ad una delle due immagini,  vengono individuati i descrittori più simili nella seconda immagine. Questi descrittori simili, sono ordinati in base alla distanza euclidea; il più vicino, ossia il "miglior match", e il secondo più vicino come "secondo miglior match".\\
+Il Ratio Test {\itshape confronta la distanza del miglior match con quella del secondo miglior match} e scarta i match in cui il rapporto tra queste distanze è superiore a una certa soglia (ad esempio 0.75).\\
+E' necessario, perciò, definire il valore più accurato di questo parametro.\\
+Per il dato studio, è opportuno diminuire il valore soglia definito al fine di:
+\begin{itemize}
+\item \textbf{Ridurre il numero di falsi positivi}: Una soglia inferiore rende il test più selettivo, riducendo la probabilità di accettare corrispondenze deboli o errate, migliorando così la qualità complessiva dei match.
+\item \textbf{Aumentare l'accuratezza del modello}: Nel contesto della visione artificiale, avere corrispondenze di qualità è fondamentale per la precisione di applicazioni come il feature matching.
+\item \textbf{Migliorare la robustezza agli errori}: Una selezione più rigida dei match consente di ridurre l’impatto di rumore o variazioni di illuminazione, migliorando la robustezza del sistema.
+\item \textbf{Efficienza computazionale}: Anche se può sembrare controintuitivo, un Ratio Test più basso porta spesso a meno match, riducendo i calcoli necessari per i passaggi successivi (come l'uso dell'algoritmo RANSAC).
+\end{itemize}
+Viene perciò decrementato il valore di Ratio Test a \textbf{0.75}.\\
+
+Grazie a queste migliorie apportate, i valori di accuracy ottenuti attraverso l'algoritmo di matching per le immagini di bitewing SX sono i seguenti:
+\begin{figure}[H]
+	\centering
+	\includegraphics{figures/sx9.pdf}
+    	\caption{Accuracy BTW SX Matching Ottimizzato}
+	\label{fig:sx9}
+\end{figure}
+I risultati di accuracy sono nettamente migliorati.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Uniformità di luminosità}
+\begin{figure}[H]
+	\centering
+	\includegraphics{figures/ds\_6\_img\_176.pdf}
+    	\caption{Luminosità Elevata}
+	\label{fig:luminosità}
+\end{figure}
+Immagini come quella sopra riportata presentano un livello di luminosità talmente elevato, da rendere difficile l'individuazione dei singoli denti anche all'occhio umano. L'algoritmo SIFT di feature matching non è invariante rispetto ai valori di luminosità. Questo significa che la bontà del modello dipende dai valori di luminostà dell'immagine.\\
+Viene perciò definita una semplice funzione al fine di rendere uniformi i valori di luminosità delle immagini di querying ortopanoramiche; questa funzione risulta utile al fine di uniformare la luminosità di immagini scattate in condizioni di luce variabili.
+\begin{figure}[H]
+    \centering
+    \lstinputlisting[language=Python,label={lst:sxRoI}]{listings/luminosity.py}
+\end{figure}
+L'algoritmo \textbf{adjust\_luminosity} regola la luminosità di un'immagine caricata tramite OpenCV per ottenere una luminosità media vicina a un valore target specificato, effettuando:
+\begin{itemize}
+\item Conversione allo spazio colore \textbf{LAB}: Converte l'immagine dallo spazio colore BGR (utilizzato comunemente da OpenCV) allo spazio colore LAB. Nello spazio LAB, il canale L rappresenta la luminosità (lightness), mentre A e B rappresentano le componenti cromatiche. Questa conversione facilita la regolazione della luminosità senza alterare i colori.
+\item Separazione dei canali: Divide i tre canali dell'immagine LAB (L, A e B) per poter manipolare direttamente il canale L in isolamento.
+\item Calcolo della luminosità attuale: Calcola la luminosità media corrente del canale L, che rappresenta la luminosità complessiva dell'immagine.
+\item Normalizzazione del canale L: Regola il canale L al fine di ottenere una luminosità media vicina al valore {\itshape target\_luminosity}. La funzione \itshape{cv2.normalize} viene utilizzata allo scopo di scalare i valori di luminosità attuali intorno al valore target, garantendo, così, che i valori minimi e massimi del canale L siano centrati intorno alla luminosità desiderata.
+\item Ricombinazione dei canali LAB: Dopo aver modificato il canale L, riunisce i tre canali (L, A, B) in un'unica immagine LAB.
+\item Ritorno allo spazio colore BGR: Converte l'immagine modificata dallo spazio colore LAB di nuovo al formato BGR per restituire un’immagine modificata utilizzabile nei sistemi che operano in BGR.
+\end{itemize}
+Effettuando l'interrogazione dell'algoritmo di Match SIFT su immagini così uniformate, i risultati prodotti sono i seguenti:
+\begin{figure}[H]
+	\centering
+	\includegraphics{figures/sx10.pdf}
+    	\caption{Accuracy BTW SX Matching Luminosità}
+	\label{fig:sx10}
+\end{figure}
+
+Viene così eseguito l'algoritmo SIFT anche per le interrogazioni sulle immagini di bitewing dx e frontali. I risultati ottenuti sono molto buoni e migliorati.
+\begin{figure}[H]
+	\centering
+	\includegraphics{figures/frontal6.pdf}
+    	\caption{Accuracy FRONTAL Matching con ottimizzazioni}
+	\label{fig:frontal6}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics{figures/dx6.pdf}
+    	\caption{Accuracy BTW DX Matching con ottimizzazioni}
+	\label{fig:dx6}
+\end{figure}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
