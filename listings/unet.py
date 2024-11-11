@@ -11,9 +11,8 @@ def UNET (input_shape=(512,512,1),last_activation='sigmoid'):
     d2=Dropout(0.2)(conv3)
     conv4 = Conv2D(64,(3,3), activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(d2)
     b1=BatchNormalization()(conv4)
-    
+
     ...
-    
     
     conv11 = Conv2DTranspose(512,(4,4), activation = 'relu', padding = 'same', strides=(2,2),kernel_initializer = 'he_normal')(b4)
     x= concatenate([conv11,conv8])
@@ -21,7 +20,6 @@ def UNET (input_shape=(512,512,1),last_activation='sigmoid'):
     d6=Dropout(0.4)(conv12)
     conv13 = Conv2D(256,(3,3), activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(d6)
     b5=BatchNormalization()(conv13)
-    
     
     conv14 = Conv2DTranspose(256,(4,4), activation = 'relu', padding = 'same', strides=(2,2),kernel_initializer = 'he_normal')(b5)
     x1=concatenate([conv14,conv6])
