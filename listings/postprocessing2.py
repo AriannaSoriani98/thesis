@@ -1,5 +1,4 @@
 def remove_isolated_gray_regions(mask):
-
     # Threshold the mask to define gray (128-254), white (255), and black (0) regions
     gray_mask = ((mask > 0) & (mask < 255)).astype(np.uint8) * 255
     white_mask = (mask == 255).astype(np.uint8) * 255
@@ -12,7 +11,6 @@ def remove_isolated_gray_regions(mask):
     
     for cnt in contours:
         # Check if the gray region is near a white area
-        # Create a mask for this specific gray region
         gray_region_mask = np.zeros_like(mask, dtype=np.uint8)
         cv2.drawContours(gray_region_mask, [cnt], -1, 255, thickness=cv2.FILLED)
 

@@ -1,23 +1,33 @@
-def apply_central_rectangle_mask(mask, mask_ratio=0.6):
+def post_process_mask(binary_mask):
+    # 1. Convert to binary image (in case it isn't already)
+    _, binary_mask = cv2.threshold(binary_mask, 127, 255, cv2.THRESH_BINARY)
 
-    # Get mask dimensions
-    height, width = mask.shape[:2]
+    # 2. Morphological Opening to remove small noise
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
+    cleaned_mask = cv2.morphologyEx(binary_mask, cv2.MORPH_OPEN, kernel)
 
-    # Calculate the central rectangle dimensions
-    central_width = int(width * mask_ratio)
-    central_height = int(height * mask_ratio)
-    
-    # Determine the starting and ending coordinates for the central rectangle
-    x_start = (width - central_width) // 2
-    y_start = (height - central_height) // 2
-    x_end = x_start + central_width
-    y_end = y_start + central_height
+    # 3. Remove small connected components (outliers)
+    num_labels, labels, stats, _ = cv2.connectedComponentsWithStats(cleaned_mask, connectivity=8)
 
-    # Create a blank mask and fill in the central rectangle area
-    central_mask = np.zeros_like(mask, dtype=np.uint8)
-    central_mask[y_start:y_end, x_start:x_end] = 255
+    # Define minimum area to keep
+    min_area = 100
+    filtered_mask = np.zeros_like(binary_mask)
 
-    # Apply the central mask to the input mask
-    result_mask = cv2.bitwise_and(mask, central_mask)
-    return result_mask
+    # Image dimensions
+    height, width = binary_mask.shape
 
+    for i in range(1, num_labels):  # Skip the background (label 0)
+        area = stats[i, cv2.CC_STAT_AREA]
+        x = stats[i, cv2.CC_STAT_LEFT]
+        y = stats[i, cv2.CC_STAT_TOP]
+        w = stats[i, cv2.CC_STAT_WIDTH]
+        h = stats[i, cv2.CC_STAT_HEIGHT]
+
+        # Check if component touches the border
+        touches_border = (x == 0 or y == 0 or x + w == width or y + h == height)
+
+        # Keep components based on area and if they don't touch the border
+        if area >= min_area and not touches_border:
+            filtered_mask[labels == i] = 255
+
+    return filtered_mask

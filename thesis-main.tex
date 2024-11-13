@@ -15,8 +15,8 @@
 
 \school{\unibo}
 \programme{Corso di Laurea Magistrale in Ingegneria e Scienze Informatiche}
-\title{Human Identification \& Recognition from X-Ray Dental Images\\
-    \large for forensic applications
+\title{Identificazione umana mediante analisi di immagini radiografiche dentali\\
+    \large per applicazioni in ambito forense
 }
 \author{Arianna Soriani}
 \date{\today}
@@ -1137,25 +1137,25 @@ Di conseguenza, nel caso in cui dovessero essere individuati dei descrittori che
 Vengono confrontati i risultati ottenuti, con questo tipo di computazione, rispetto ai risultati ottenuti nei punti precedenti.
 \begin{figure}[H]
 	\centering
-	\includegraphics{figures/frontal2.pdf}
+	\includegraphics{figures/frontal2_1.pdf}
     	\caption{Accuracy Frontal Matching con Masking}
 	\label{fig:frontal2}
 \end{figure}
 \begin{figure}[H]
 	\centering
-	\includegraphics{figures/dx2.pdf}
+	\includegraphics{figures/dx2_1.pdf}
     	\caption{Accuracy BTW DX Matching con Masking}
 	\label{fig:dx2}
 \end{figure}
 \begin{figure}[H]
 	\centering
-	\includegraphics{figures/sx2.pdf}
+	\includegraphics{figures/sx2_1.pdf}
     	\caption{Accuracy BTW SX Matching con Masking}
 	\label{fig:sx2}
 \end{figure}
 \begin{figure}[H]
 	\centering
-	\includegraphics{figures/tempi2.pdf}
+	\includegraphics{figures/tempi2_1.pdf}
    	\caption{Tempi di esecuzione con Masking}
 	\label{fig:tempi2}
 \end{figure}
@@ -1324,25 +1324,25 @@ L'applicazione di questo algoritmo alle immagini ortopanoramiche, dovrebbe porta
 Ma i risultati così ottenuti sono riportati di seguito:
 \begin{figure}[H]
 	\centering
-	\includegraphics{figures/frontal3.pdf}
+	\includegraphics{figures/frontal3_1.pdf}
    	\caption{Accuracy Frontal Matching con RoI}
 	\label{fig:frontal3}
 \end{figure}
 \begin{figure}[H]
 	\centering
-	\includegraphics{figures/dx3.pdf}
+	\includegraphics{figures/dx3_1.pdf}
     	\caption{Accuracy BTW DX Matching con RoI}
 	\label{fig:dx3}
 \end{figure}
 \begin{figure}[H]
 	\centering
-	\includegraphics{figures/sx3.pdf}
+	\includegraphics{figures/sx3_1.pdf}
     	\caption{Accuracy BTW SX Matching con RoI}
 	\label{fig:sx3}
 \end{figure}
 \begin{figure}[H]
 	\centering
-	\includegraphics{figures/tempi3.pdf}
+	\includegraphics{figures/tempi3_1.pdf}
     	\caption{Tempi di esecuzione con definizione di RoI}
 	\label{fig:tempi3}
 \end{figure}
@@ -1501,25 +1501,25 @@ Viene eseguito, in prima istanza, l'algoritmo SIFT per l'estrazione dei keypoint
 I risultati ottenuti sono riportati di seguito:
 \begin{figure}[H]
 	\centering
-	\includegraphics{figures/frontal4.pdf}
+	\includegraphics{figures/frontal4_1.pdf}
    	\caption{Accuracy Frontal Matching con U-Net}
 	\label{fig:frontal4}
 \end{figure}
 \begin{figure}[H]
 	\centering
-	\includegraphics{figures/dx4.pdf}
+	\includegraphics{figures/dx4_1.pdf}
     	\caption{Accuracy BTW DX Matching con U-Net}
 	\label{fig:dx4}
 \end{figure}
 \begin{figure}[H]
 	\centering
-	\includegraphics{figures/sx4.pdf}
+	\includegraphics{figures/sx4_1.pdf}
     	\caption{Accuracy BTW SX Matching con U-Net}
 	\label{fig:sx4}
 \end{figure}
 \begin{figure}[H]
 	\centering
-	\includegraphics{figures/tempi4.pdf}
+	\includegraphics{figures/tempi4_1.pdf}
     	\caption{Tempi di esecuzione con U-Net}
 	\label{fig:tempi4}
 \end{figure}
@@ -1530,25 +1530,25 @@ Viene ora rieseguito l'algoritmo di restringimento della RoI, che identifica una
 I risultati ottenuti sono i seguenti:
 \begin{figure}[H]
 	\centering
-	\includegraphics{figures/frontal5.pdf}
+	\includegraphics{figures/frontal5_1.pdf}
    	\caption{Accuracy Frontal Matching con RoI e U-Net}
 	\label{fig:frontal5}
 \end{figure}
 \begin{figure}[H]
 	\centering
-	\includegraphics{figures/dx5.pdf}
+	\includegraphics{figures/dx5_1.pdf}
     	\caption{Accuracy BTW DX Matching con RoI e U-Net}
 	\label{fig:dx5}
 \end{figure}
 \begin{figure}[H]
 	\centering
-	\includegraphics{figures/sx5.pdf}
+	\includegraphics{figures/sx5_1.pdf}
     	\caption{Accuracy BTW SX Matching con RoI e U-Net}
 	\label{fig:sx5}
 \end{figure}
 \begin{figure}[H]
 	\centering
-	\includegraphics{figures/tempi5.pdf}
+	\includegraphics{figures/tempi5_1.pdf}
     	\caption{Tempi di esecuzione con RoI e U-Net}
 	\label{fig:tempi5}
 \end{figure}
@@ -1629,7 +1629,7 @@ Il risultato di questa operazione è un'immagine più ampia e conseguentemente u
 Eseguendo l'algoritmo di matching con applicazione dell'intera maschera dilatata, i risultati di accuracy per le immagini di bitewing sinistro sono i seguenti:
 \begin{figure}[H]
 	\centering
-	\includegraphics{figures/sx6.pdf}
+	\includegraphics{figures/sx6_1.pdf}
     	\caption{Accuracy BTW SX Matching Dilated}
 	\label{fig:sx6}
 \end{figure}
@@ -1643,14 +1643,25 @@ E' opportuno, allora, eliminare le aree di outlier al fine di incentrare l'elabo
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Post-processing delle maschere} 
 Una rete UNet può occasionalmente catturare aree esterne vicine ai contorni della Regione di Interesse (RoI) a causa di challenges di precisione in corrispondenza dei bordi o a causa di leggeri sovrapposizioni nelle regioni segmentate.\\
-E' possibile però implementare alcune soluzioni utili ad ignorare le aree esterne alla regione di interesse. Una di queste metodologie applica un'elaborazione Post-Processing sulle maschere. Il processo implementato segue due step principali:
-\begin{itemize}
-\item Definizione di una bounding box al fine di isolare solo l'area centrale di interesse, area in corrispondenza della quale è presente l'arcata dentale. Viene così ignorato tutto ciò che cade al di fuori di questa regione. Questo approccio è efficace se la RoI si trova costantemente in un'area prevedibile all'interno dell'immagine, come nel caso delle immagini ortopanoramiche.
+E' possibile però implementare alcune soluzioni utili ad ignorare le aree esterne alla regione di interesse. Una di queste metodologie applica un'elaborazione di \textbf{Post-Processing} sulle maschere.\\
+Il processo implementato segue due step principali, definiti, rispettivamente, dalle seguenti funzioni:
+\begin{enumerate}
+\item \textbf{post\_process\_mask}:
 \begin{figure}[H]
     \centering
     \lstinputlisting[language=Python,label={lst:postprocessing}]{listings/postprocessing.py}
 \end{figure}
-Un esempio dei benefici introdotti è il seguente: 
+
+La funzione effettua un'operazione di post-processing di una maschera binaria, al fine di rimuovere piccoli componenti di rumore ed eliminare gli oggetti che intersecano i bordi dell'immagine. In particolare, vengono effettate operazioni di:
+\begin{itemize}
+\item \textbf{Rimozione del Rumore attraverso l’Apertura Morfologica}:\\
+Viene applicata un'operazione morfologica di {\itshape apertura} utilizzando un kernel ellittico di dimensioni (5, 5). Questo passaggio è utile al fine di rimuovere piccoli elementi di rumore isolati, mantenendo intatti i componenti a dimensionalità maggiore.
+\item \textbf{Rimozione di Piccoli Componenti Connessi (Outliers):}\\
+La funzione {\itshape connectedComponentsWithStats} individua tutti i componenti connessi (regioni continue di pixel bianchi) e calcola alcuni valori statistici, come l'area e le coordinate. Definisce un'area minima e crea una nuova maschera dove saranno conservati solo i componenti a dimensionalità sufficiente e che non si intersecano con i bordi dell'immagine. Viene iterato questo processo su ogni componente appartenente alla maschera individuato. I componenti che soddisfano entrambi i criteri vengono mantenuti nella maschera filtrata.
+\item Infine, viene restituita la maschera filtrata, che rappresenta la versione post-elaborata della maschera iniziale, pulita dai piccoli componenti indesiderati e priva di regioni confinanti con i bordi.
+\end{itemize}
+
+Un esempio dei benefici introdotti dalla funzione, è visualizzabile di seguito: 
 \begin{figure}[H]
     \centering
     \begin{minipage}{0.45\textwidth}
@@ -1666,33 +1677,38 @@ Un esempio dei benefici introdotti è il seguente:
     	\label{lab:Maschera dilatata}
     \end{minipage}\hfill
 \end{figure}
-\item L'output così prodotto elimina le aree bianche che sono state erroneamente identificate durante il processo di generazione delle maschere. Può però succedere, che alcune immagini presentino delle aree grigie erroneamente individuate al di fuori dell'arcata dentale e quindi non appartententi alla RoI. Viene perciò implementata una funzione che sfrutta la \textbf{Connected Component Analysis}. Questa tecnica identifica le regioni grigie e le filtra in base alla presenza nella loro prossimità di aree bianche. 
+
+\item Questo processamento è utile al fine di ottenere una maschera binaria pulita, in cui vengono eliminati i rumori e gli artefatti, mentre vengono mantenute solo le aree rilevanti. \\
+Può però succedere, che alcune immagini presentino delle aree grigie erroneamente individuate al di fuori dell'arcata dentale e quindi non appartententi alla RoI. \\
+Viene perciò implementata una funzione che sfrutta la \textbf{Connected Component Analysis}. Questa tecnica identifica le regioni grigie e le filtra in base alla presenza nella loro prossimità di aree bianche. 
 \begin{enumerate}
-\item \textbf{Connected Component Analysis}: Identifica regioni continue nella maschera, classificandole come bianche, grigie o nere.
-\item \textbf{Proximity Filtering}: Per ogni regione grigia individuata, controlla se si sovrappone o è in prossimità di una regione bianca. Se è isolata, quindi non vicina ad una regione bianca, la rimuove settandola a nero.
+\item \textbf{Connected Component Analysis}:\\
+Identifica regioni continue nella maschera, classificandole come bianche, grigie o nere.
+\item \textbf{Proximity Filtering}: \\
+Per ogni regione grigia individuata, controlla se si sovrappone o è in prossimità di una regione bianca. Se è isolata, quindi non vicina ad una regione bianca, la rimuove settandola a nero.
 \end{enumerate}
 \begin{figure}[H]
     \centering
     \lstinputlisting[language=Python,label={lst:postprocessing2}]{listings/postprocessing2.py}
 \end{figure}
 
-\end{itemize}
+\end{enumerate}
 
-Eseguendo, ora, l'algoritmo di match sull'intera maschera così filtrata, i risultati ottenuti sono:
+Eseguendo, ora, l'algoritmo di match sull'intera maschera così filtrata, è possibile osservare come i risultati di accuracy ottenuti siano nettamente migliorati, seppur ancora con margine di perfezionamento. \\
+I risultati ottenuti sono i seguenti:
 \begin{figure}[H]
 	\centering
-	\includegraphics{figures/sx7.pdf}
-    	\caption{Accuracy BTW SX Matching Dilated with Post-Processing}
+	\includegraphics{figures/sx7_1.pdf}
+    	\caption{Accuracy Matching BTW SX con Post-Processing}
 	\label{fig:sx6}
 \end{figure}
-
 I valori di accuracy sono ora molto migliorati, seppur ancora perfezionabili con ulteriori ottimizzazioni. \\
 Gli errori di matching che possono essere osservati a questo punto, riguardano l'area di ricerca individuata dalla RoI. Vengono, perciò, applicate delle ottimizzazioni al processo di definizione delle RoI specifiche.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Definizione della RoI con Coordinate}
 L'algoritmo di restringimento delle RoI definito in precedenza funziona in generale, ma presenta alcune lacune.\\
-Per arcate dentali complete, o che presentano la zona di interesse ricercata corrispondente all'immagine di bitewing di query, l'algoritmo delimita correttamente l'area di restringimento.\\
+Per arcate dentali complete, o che presentano la zona di interesse ricercata corrispondente all'immagine di bitewing di query, l'algoritmo delimita correttamente l'area di restringimento. %% c'era a capo 
 Ma è importante evidenziare cosa succede quando queste condizioni non sono verificate. Di seguito viene mostrato un esempio:
 \begin{figure}[H]
     \centering
@@ -1747,14 +1763,14 @@ L'algoritmo di Matching con SIFT così definito, è molto accurato. Viene implem
 \end{itemize}
 \end{itemize}
 
-I risultati di accuracy, ottenuti attraverso l'applicazione delle ottimizzazioni descritte, sono i seguenti:
-\begin{figure}[H]
-	\centering
-	\includegraphics{figures/sx8.pdf}
-    	\caption{Accuracy BTW SX Matching con coordinate}
-	\label{fig:sx8}
-\end{figure}
-Seppur migliorati, presentano ancora risultati non ottimi soprattutto in relazione ai valori di Rank@1.
+%I risultati di accuracy, ottenuti attraverso l'applicazione delle ottimizzazioni descritte, sono i seguenti:
+%\begin{figure}[H]
+%	\centering
+%	\includegraphics{figures/sx8.pdf}
+%    	\caption{Accuracy BTW SX Matching con coordinate}
+%	\label{fig:sx8}
+%\end{figure}
+%Seppur migliorati, presentano ancora risultati non ottimi soprattutto in relazione ai valori di Rank@1.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Modifica del Ratio test}
@@ -1775,56 +1791,61 @@ Viene perciò decrementato il valore di Ratio Test a \textbf{0.7}.\\
 Grazie a queste migliorie apportate, i valori di accuracy ottenuti attraverso l'algoritmo di matching per le immagini di bitewing SX sono i seguenti:
 \begin{figure}[H]
 	\centering
-	\includegraphics{figures/sx9.pdf}
+	\includegraphics{figures/sx9_1.pdf}
     	\caption{Accuracy BTW SX Matching Ottimizzato}
 	\label{fig:sx9}
 \end{figure}
-I risultati di accuracy così ottenuti, sono nettamente migliorati.
+I risultati di accuracy così ottenuti, sono complessivamente migliorati.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Uniformità di luminosità}
+\section{Ottimizzazione maschere}
+Immagini come quella sotto riportata presentano un livello di luminosità talmente elevato, da rendere difficile l'individuazione dei singoli denti anche all'occhio umano. \\
+L'algoritmo di generazione delle maschere, in casi come questo, non è in grado di estrarre correttamente l'immagine binaria corrispondente.
 \begin{figure}[H]
 	\centering
-	\includegraphics{figures/ds\_6\_img\_176.pdf}
+	\includegraphics[width=12cm]{figures/ds\_6\_img\_176.pdf}
     	\caption{Luminosità Elevata}
 	\label{fig:luminosità}
 \end{figure}
-Immagini come quella sopra riportata presentano un livello di luminosità talmente elevato, da rendere difficile l'individuazione dei singoli denti anche all'occhio umano. L'algoritmo SIFT di feature matching non è invariante rispetto ai valori di luminosità. Questo significa che la bontà del modello dipende dai valori di luminostà dell'immagine.\\
-Viene perciò definita una semplice funzione al fine di rendere uniformi i valori di luminosità delle immagini di querying ortopanoramiche; questa funzione risulta utile al fine di uniformare la luminosità di immagini scattate in condizioni di luce variabili.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=12cm]{figures/ds\_6\_img\_176_mask.pdf}
+    	\caption{Maschera corrispondente}
+	\label{fig:maskLuminosa}
+\end{figure}
+Viene, perciò, definita un'opportuna funzione di \textbf{Pre-processing} da applicare alle immagini ortopanoramiche, prima di essere fornite in input alla rete di generazione delle maschere.\\
+Questa funzione, {\itshape uniform\_luminosity\_contrast}, ha l'obiettivo di migliorare il contrasto e uniformare la luminosità di un'immagine, attraverso l'implementazione di un'opportuna trasformazione nello \textbf{spazio colore LAB} e attraverso l'ausilio della tecnica \textbf{CLAHE} (Contrast Limited Adaptive Histogram Equalization) sul canale di luminosità L.
 \begin{figure}[H]
     \centering
-    \lstinputlisting[language=Python,label={lst:sxRoI}]{listings/luminosity.py}
+    \lstinputlisting[language=Python,label={lst:luminosity}]{listings/luminosity.py}
 \end{figure}
-L'algoritmo \textbf{adjust\_luminosity} regola la luminosità di un'immagine caricata tramite OpenCV per ottenere una luminosità media vicina a un valore target specificato, effettuando:
+Vengono implementati i seguenti passaggi:
+\begin{enumerate}
+\item \textbf{Conversione allo Spazio Colore LAB}:\\
+Viene convertita l’immagine nello spazio colore LAB (L: Luminosità, A: Verde-Rosso, B: Blu-Giallo). Questo spazio colore è utile ai fini della manipolazione della luminosità; in questo modo, le informazioni di contrasto e di luminosità possono essere regolate più facilmente attraverso la separazione del canale L.
+\item \textbf{Separazione dei Canali}:\\
+Viene effettuata la divisione dell’immagine LAB nei singoli canali L, A, e B. 
 \begin{itemize}
-\item Conversione allo spazio colore \textbf{LAB}: Converte l'immagine dallo spazio colore BGR (utilizzato comunemente da OpenCV) allo spazio colore LAB. Nello spazio LAB, il canale L rappresenta la luminosità (lightness), mentre A e B rappresentano le componenti cromatiche. Questa conversione facilita la regolazione della luminosità senza alterare i colori.
-\item Separazione dei canali: Divide i tre canali dell'immagine LAB (L, A e B) per poter manipolare direttamente il canale L in isolamento.
-\item Calcolo della luminosità attuale: Calcola la luminosità media corrente del canale L, che rappresenta la luminosità complessiva dell'immagine.
-\item Normalizzazione del canale L: Regola il canale L al fine di ottenere una luminosità media vicina al valore {\itshape target\_luminosity}. La funzione \itshape{cv2.normalize} viene utilizzata allo scopo di scalare i valori di luminosità attuali intorno al valore target, garantendo, così, che i valori minimi e massimi del canale L siano centrati intorno alla luminosità desiderata.
-\item Ricombinazione dei canali LAB: Dopo aver modificato il canale L, riunisce i tre canali (L, A, B) in un'unica immagine LAB.
-\item Ritorno allo spazio colore BGR: Converte l'immagine modificata dallo spazio colore LAB di nuovo al formato BGR per restituire un’immagine modificata utilizzabile nei sistemi che operano in BGR.
+\item Il canale L rappresenta le informazioni di luminosità dell’immagine.
+\item Viceversa, i canali A e B gestiscono le informazioni cromatiche.
 \end{itemize}
-Effettuando l'interrogazione dell'algoritmo di Match SIFT su immagini così uniformate, i risultati prodotti sono i seguenti:
-\begin{figure}[H]
-	\centering
-	\includegraphics{figures/sx10.pdf}
-    	\caption{Accuracy BTW SX Matching Luminosità}
-	\label{fig:sx10}
-\end{figure}
+\item \textbf{Creazione e Applicazione di CLAHE sul Canale L}:\\
+CLAHE viene creato con un {\itshape clipLimit} di 1.0 e una {\itshape tileGridSize} di 8×8. L'obiettivo dell'applicazione di CLAHE è migliorare il contrasto, limitando il clipping, e suddividendo l'immagine in piccole aree, che uniformano l'istogramma e riducono l'effetto di sovraesposizione.
+\item \textbf{Calcolo e Regolazione della Luminosità Attuale}:\\
+Viene determinata la luminosità media attuale del canale L (attraverso {\itshape .mean()}). Viene, poi, regolato il livello di luminosità scalando il canale L al fine di avvicinarsi alla luminosità target definita ({\itshape target\_luminosity}).Viene utilizzata la funzione {\itshape cv2.normalize} per mappare i valori del canale L all’ interno dell'intervallo specificato, centrato attorno alla luminosità target. Questa operazione mantiene il contrasto all'interno del canale di luminosità.
+\item \textbf{Applicazione ulteriore di CLAHE}:\\
+Viene applicata CLAHE sul canale L, normalizzato, al fine di migliorare ulteriormente il contrasto e garantire un aspetto uniforme.
+\item \textbf{Ricombinazione dei Canali e Conversione a BGR}:\\
+Vengono riuniti i canali L, A e B, ricostruendo, così, l’immagine LAB. Viene, infine, convertita l’immagine LAB pre-elaborata, nello spazio colore BGR per riportarla allo spazio colore originale e renderla visualizzabile in RGB.
+\end{enumerate}
 
-Viene così eseguito l'algoritmo SIFT anche per le interrogazioni sulle immagini di bitewing dx e frontali. I risultati ottenuti sono molto buoni e migliorati.
 \begin{figure}[H]
 	\centering
-	\includegraphics{figures/frontal6.pdf}
-    	\caption{Accuracy FRONTAL Matching con ottimizzazioni}
-	\label{fig:frontal6}
+	\includegraphics[width=12cm]{figures/ds\_6\_img\_176_mask_2.pdf}
+    	\caption{Maschera corrispondente}
+	\label{fig:maskLuminosa}
 \end{figure}
-\begin{figure}[H]
-	\centering
-	\includegraphics{figures/dx6.pdf}
-    	\caption{Accuracy BTW DX Matching con ottimizzazioni}
-	\label{fig:dx6}
-\end{figure}
-
+Grazie al pre-processing delle immagini ortopanoramiche vengono contrastati gli errori di generazione delle maschere binarie in casi limite.
+Infatti, la maschera corrispondente all'esempio precedente, ora risulta perfettamente definita.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Contribution}
