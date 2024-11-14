@@ -1614,13 +1614,13 @@ Il risultato di questa operazione è un'immagine più ampia e conseguentemente u
     \centering
     \begin{minipage}{0.45\textwidth}
 	\centering
-    	\includegraphics[width=8cm]{figures/maskoriginal.pdf}
+    	\includegraphics[width=8cm]{figures/OPT_8.pdf}
     	\caption{Maschera originale}
     	\label{lab:Maschera Originale}
     \end{minipage}\hfill
     \begin{minipage}{0.45\textwidth}
     	\centering
-    	\includegraphics[width=8cm]{figures/maskdilated.pdf}
+    	\includegraphics[width=8cm]{figures/OPT_8_mask.pdf}
     	\caption{Maschera dilatata}
     	\label{lab:Maschera dilatata}
     \end{minipage}\hfill
@@ -1666,15 +1666,15 @@ Un esempio dei benefici introdotti dalla funzione, è visualizzabile di seguito:
     \centering
     \begin{minipage}{0.45\textwidth}
 	\centering
-    	\includegraphics[width=8cm]{figures/mask\_191.pdf}
+    	\includegraphics[width=8cm]{figures/ds_2_img_19.pdf}
     	\caption{Maschera con imperfezioni}
     	\label{lab:Maschera imperfetta}
     \end{minipage}\hfill
     \begin{minipage}{0.45\textwidth}
     	\centering
-    	\includegraphics[width=8cm]{figures/mask\_191\_crop.pdf}
-    	\caption{Maschera con crop laterale}
-    	\label{lab:Maschera dilatata}
+    	\includegraphics[width=8cm]{figures/ds_2_img_19_mask.pdf}
+    	\caption{Maschera con dropout degli outlier}
+    	\label{lab:Maschera dropout}
     \end{minipage}\hfill
 \end{figure}
 
@@ -1847,15 +1847,65 @@ Vengono riuniti i canali L, A e B, ricostruendo, così, l’immagine LAB. Viene,
 Grazie al pre-processing delle immagini ortopanoramiche vengono contrastati gli errori di generazione delle maschere binarie in casi limite.
 Infatti, la maschera corrispondente all'esempio precedente, ora risulta perfettamente definita.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+\section{Risultati ottenuti}
+I risultati che ora vengono presentati, sono il prodotto dell'applicazione e combinazione di tutti i processi di ottimizzazione precedentemente descritti. Anche l'ordine di applicazione è molto importante al fine del raggiungimento dei massimi risultati. Vengono, perciò, realizzati i seguenti passi computazionali:
+\begin{enumerate}
+\item \textbf{Pre-processing delle immagini ortopanoramiche}: al fine di migliorare il contrasto e uniformare la luminosità delle immagini. I valori che vengono impostati sono: {\itshape target\_luminosity=50}, {\itshape clipLimit=1.0}, {\itshape titleGridSize=(8,8)}.
+\item \textbf{Estrazione delle maschere binarie}: attraverso l'esecuzione della seconda rete neurale, la rete U-Net.
+\item \textbf{Post-processing delle maschere}: al fine di eliminare le aree erroneamente catturate durante il processo di generazione delle maschere. Viene prima eseguita la funzione {\itshape post\_process\_mask} e successivamente, la funzione {\itshape remove\_isolated\_gray\_regions}.
+\item \textbf{Dilatazione delle maschere}: al fine di catturare keypoint significativi, come bordi e zone di confine. Viene impostato un valori di {\itshape dilation\_size} pari a 20.
+\item \textbf{Definizione delle RoI attraverso i valori di coordinate}: rispettivamente, per le immagini di bitewing sinistro, destro e frontali. Per le prime due, viene definito {\itshape x\_mid = width //2} e considerata rispettivamente la parte a sinistra e a destra rispetto tale punto, mentre per la terza tipologia di immagini, viene considerato il 20\% della larghezza dell'immagine, centrato in x\_mid.
+\item \textbf{Esecuzione dell'algoritmo SIFT}: con valori di {\itshape Lowe's Ratio Test} pari a 0.7.
+\end{enumerate}
+I risultati così ottenuti, sono confrontati con quelli prodotti dall'applicazione dell'algoritmo SIFT, con il medesimo valore di Lowe's test, sul dataset delle 2309 immagini ortopanoramiche, senza ausilio di nessun tipo di ottimizzazione.
+\begin{figure}[H]
+	\centering
+	\includegraphics{figures/frontal6_1.pdf}
+    	\caption{Accuracy Frontal Matching Ottimizzato}
+	\label{fig:frontalopt}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics{figures/dx6_1.pdf}
+    	\caption{Accuracy BTW dx Matching Ottimizzato}
+	\label{fig:dxopt}
+\end{figure}+\begin{figure}[H]
+	\centering
+	\includegraphics{figures/sx10_1.pdf}
+    	\caption{Accuracy BTW sx Matching Ottimizzato}
+	\label{fig:sxopt}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics{figures/tempi6_1.pdf}
+    	\caption{Tempi Matching Ottimizzato}
+	\label{fig:tempiopt}
+\end{figure}
+
+A questo punto, è possibile anche effettuare un'ulteriore valutazione. Precedentemente, a causa della struttura imperfetta degli algoritmi, l'algoritmo di Unione dei 3 match ha portato a risultati di accuracy molto bassi. Questo problema era dovuto alla non ottimalità dei 3 diversi algoritmi che, una volta uniti, ha peggiorato ulteriormente la computazione.\\
+In seguito alle ottimizzazioni introdotte e al raggiungimento di risultati molto buoni da parte degli algoritmi definiti, è possibile rieseguire l'algoritmo di unione di match, considerando, però, le ultime valutazioni presentate.\\
+Perciò, eseguendo l'algoritmo di unione di match, attraverso i passi computazionali definiti in questa sezione, i risultati di accuracy sono sorprendenti:
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=16cm]{figures/3match_1.pdf}
+    	\caption{Accuracy Unione di Match Ottimizzato}
+	\label{fig:unioneopt}
+\end{figure}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Contribution}
-I suggest referencing stuff as follows: \cref{fig:random-image} or \Cref{fig:random-image}
+\chapter{Conclusioni}
 
-You may also put some code snippet (which is NOT float by default), eg: \cref{lst:random-code}.
 
-\lstinputlisting[float,language=Java,label={lst:random-code}]{listings/HelloWorld.java}
-
-\section{Fancy formulas here}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\chapter{Contribution}
+%I suggest referencing stuff as follows: \cref{fig:random-image} or \Cref{fig:random-image}
+%
+%You may also put some code snippet (which is NOT float by default), eg: \cref{lst:random-code}.
+%
+%\lstinputlisting[float,language=Java,label={lst:random-code}]{listings/HelloWorld.java}
+%
+%\section{Fancy formulas here}
 
 %----------------------------------------------------------------------------------------
 % BIBLIOGRAPHY
