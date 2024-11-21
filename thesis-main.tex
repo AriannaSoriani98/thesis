@@ -7,6 +7,12 @@
 \usepackage{notes}
 \usepackage{shortcuts}
 \usepackage{acronym}
+\usepackage{makecell} % Pacchetto per andare a capo nelle celle
+\usepackage{xcolor}
+\usepackage{colortbl} % Per colorare le tabelle
+\usepackage{booktabs} % Per migliorare l'estetica delle tabelle
+\usepackage{longtable} % per gestire tabelle lunghe
+
 
 \hypersetup{
     hidelinks % Nasconde i cerchiati attorno ai link
@@ -15,9 +21,7 @@
 
 \school{\unibo}
 \programme{Corso di Laurea Magistrale in Ingegneria e Scienze Informatiche}
-\title{Identificazione umana mediante analisi di immagini radiografiche dentali\\
-    \large per applicazioni in ambito forense
-}
+\title{Identificazione umana mediante radiografie dentali per applicazioni forensi}
 \author{Arianna Soriani}
 \date{\today}
 \subject{Visione Artificiale}
@@ -107,7 +111,7 @@ Ogni subdirectory presenta la medesima struttura:
 
 Il formato desiderato per ogni immagine memorizzata è il seguente:
 \begin{itemize}
-\item \textbf{OTP\_idNumber}: radiografia ortopanoramica.
+\item \textbf{OPT\_idNumber}: radiografia ortopanoramica.
 \item \textbf{FRONTAL\_idNumber}: radiografia di bitewing frontale.
 \item \textbf{BTW SX\_idNumber}: radiografia di bitewing della porzione sinistra dell'ortopanoramica.
 \item \textbf{BTW DX\_idNumber}: radiografia di bitewing della porzione destra dell'ortopanoramica.
@@ -147,11 +151,11 @@ Da una prima analisi effettuata sul dataset, emerge immediatamente la non unifor
 Al fine di effettuare uno studio preliminare di analisi dei dati, sono state mantenute {\itshape solo} le subdirectory le cui immagini risultassero conformi alla struttura dei dati richiesta.\\
 
 \subsection{Suddivisione del dataset}
-Il dataset utilizzato nella fase preliminare, è definito come un sottoinsieme dell'insieme di partenza; composto unicamente dal range di pazienti 61-100. Infatti, solo questi pazienti presentano, in una prima analisi, un formato conforme dei dati. Questo a giustificazione del fatto, che i dati risalgono a periodi di acquisizione diversi e a modalità di acquisizione diverse; solo per questo sottoinsieme è posssibile garantire una nomenclatura corretta delle immagini, un formato conforme al pattern definito e un insieme di immagini "pulite" in termini di: luminosità, distorsione, rotazione, prospettiva, dimensione e proporzione.
+Il dataset utilizzato nella fase preliminare, è definito come un sottoinsieme del dataset di partenza; composto unicamente dal range di pazienti 61-100. Infatti, solo questi pazienti presentano, in una prima analisi, un formato conforme dei dati. Questo a giustificazione del fatto, che i dati risalgono a periodi di acquisizione diversi e a modalità di acquisizione diverse; solo per questo sottoinsieme è posssibile garantire una nomenclatura corretta delle immagini, un formato conforme al pattern definito e un insieme di immagini "pulite" in termini di: luminosità, distorsione, rotazione, prospettiva, dimensione e proporzione.
 
 \subsection{Idea}
 Al fine di realizzare uno studio preliminare sui dati, vengono definiti e implementati alcuni algoritmi di \textbf{Feature Detection e Matching}.\\
-Questi algoritmi seguono i seguenti passaggi:
+Questi algoritmi eseguono i seguenti passi computazionali:
 \begin{enumerate}
 \item Estrazione dei \textbf{keypoint} dalle immagini ortopanoramiche (OPT).
 \item Estrazione dei \textbf{keypoint} dalle immagini parziali di bitewing (FRONTAL e BTW).
@@ -160,7 +164,7 @@ Questi algoritmi seguono i seguenti passaggi:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Tipologie di Matching}
-Il processo di \textbf{Feature Detection e Matching} è un task molto importante di molte applicazioni di Computer Vision come: structure-from-motion, image retrieval, object detection, ecc. Essa consiste in una tecnica fondamentale che prevede l'identificazione e l'allineamento di feature corrispondenti in più immagini.\\
+Il processo di \textbf{Feature Detection e Matching} è un task molto importante di molte applicazioni di Computer Vision come: structure-from-motion, image retrieval, object detection, ecc. Esso consiste in una tecnica fondamentale che prevede l'identificazione e l'allineamento di feature corrispondenti in più immagini.\\
 Le \textbf{feature} si riferiscono a elementi distintivi di un'immagine, come  {\itshape bordi, angoli o blob}, che possono essere rilevati e descritti in modo consistente. Attraverso il matching tra feature, appartenenti a immagini distinte, i sistemi di Computer Vision sono in grado di riconoscere oggetti, tracciare movimenti, creare immagini panoramiche o ricostruire scene 3D da immagini 2D.\\
 
 Gli aspetti chiave del Feature Matching sono:
@@ -170,7 +174,7 @@ Gli aspetti chiave del Feature Matching sono:
 Il processo inizia con il rilevamento delle key features all'interno di ogni immagine. Queste feature sono tipicamente punti di interesse facili da distinguere, come angoli o bordi. Esistono diversi  sistemi di detection molto avanzati, come {\itshape Harris Corner Detector} o {\itshape Laplacian of Gaussian for blob detection}.
 
 \item \textbf{Feature Description}\\
-Una volta individuate le feature, esse vengono descritte attraverso dei \textbf{feature descriptors}, i quali forniscono una rappresentazione numerica delle caratteristiche della feature. I descrittori più diffusi sono {\itshape SIFT} (Scale-Invariant Feature Transform), {\itshape SURF} (Speeded Up Robust Features), ORB (Oriented FAST and Rotated BRIEF) e {\itshape BRIEF} (Binary Robust Independent Elementary Features).
+Una volta individuate le feature, esse vengono descritte attraverso dei \textbf{feature descriptors}, i quali forniscono una rappresentazione numerica delle caratteristiche delle feature. I descrittori più diffusi sono {\itshape SIFT} (Scale-Invariant Feature Transform), {\itshape SURF} (Speeded Up Robust Features), ORB (Oriented FAST and Rotated BRIEF) e {\itshape BRIEF} (Binary Robust Independent Elementary Features).
 
 \item \textbf{Feature Matching}\\
 Lo step core consiste nel confrontare i descrittori di feature, appartenenti a immagini diverse, al fine di individuare le corrispondenze esistenti. \\
@@ -179,9 +183,10 @@ Metodi di matching più robusti, quali {\itshape RANSAC} (Random Sample Consensu
 
 \end{enumerate}
 
-\subsection{Feature Description}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Feature Description}
 L'operazione di {\itshape feature description} è uno step cruciale nel processo di feature matching, dove le feature individuate vengono rappresentate in una modalità tale da consentirne il confronto e il match rispetto a immagini differenti.\\
-I descrittori di feature forniscono una {\itshape rappresentazione numerica o simbolica} delle caratteristiche delle features, consentendo un'efficace identificazione e allineamento tra feature corrispondenti.\\
+I descrittori di feature forniscono una {\itshape rappresentazione numerica o simbolica} delle caratteristiche delle feature, consentendo un'efficace identificazione e allineamento tra feature corrispondenti.\\
 I feature descriptors catturano l'aspetto locale intorno ad una feature, in maniera \textbf{invariante} rispetto a diverse operazioni di trasformazione, quali scala, rotazione o cambiamenti di illuminazione a seconda di come essi vengono definiti.\\
 Essi trasformano i valori dei pixel in prossimità della feature in un {\itshape vettore compatto} e di {\itshape lunghezza definita} che identifica in maniera univoca la feature individuata.\\
 Questo vettore può essere, poi, utilizzato per confrontare e abbinare le feature tra le diverse immagini.\\
@@ -202,7 +207,7 @@ BRIEF genera una stringa binaria confrontando le intensità di coppie di pixel i
 \end{enumerate}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Feature Matching}
+\section{Feature Matching}
 L'operazione di {\itshape feature matching} comporta il confronto dei descrittori di feature allo scopo di individuare feature corrispondenti in immagini diverse. \\
 Per garantire una corrispondenza accurata ed efficiente, vengono impiegate diverse tecniche, tra cui:
 
@@ -235,7 +240,7 @@ Per Robust Matching, RANSAC è un metodo iterativo utilizzato per stimare i para
 \end{enumerate}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Template Matching}
+\section{Template Matching}
 Nell'analisi preliminare, viene analizzato l'insieme di dati anche attraverso l'ausilio di un secondo metodo di Matching molto conosciuto, denominato \textbf{Template Matching}.\\
 Il Template Matching è una tecnica di alto livello, utilizzata in applicazioni di Computer Vision, al fine di individuare la posizione, o le posizioni, di un certo template fornito come immagine, all'interno di un'altra immagine più grande.\\
 Esistono diversi algoritmi di template matching avanzati che permettono di individuare le occorrenze del template indipendentemente dall'orientamento o dalla luminosità locale.\\
@@ -268,13 +273,13 @@ Ossia:
 \begin{figure}[H]
 	\centering
 	\includegraphics[height=6cm,width=11cm]{figures/matchprof.pdf}
-    	\caption{Insieme di Feature Matching}
+    	\caption{Sistema di querying}
 	\label{fig:featurematching}
 \end{figure}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
-\subsection{Protocollo operativo}
+\section{Protocollo operativo}
 Lo schema di esecuzione dell'algoritmo di matching si basa sul confronto di una singola immagine di query, immagine di bitewing, con tutte le immagini ortopanoramiche presenti nel dataset, in questo caso 40.\\
 Ai fini della valutazione dell'accuratezza del sistema, vengono studiate e analizzate tre metriche, definite come:
 \begin{itemize}
@@ -310,8 +315,8 @@ Dal match di immagini di Bitewing laterali, si ottengono, similmente, risultati 
 	\label{fig:sxprof}
 \end{figure}
 
-Dai risultati ottenuti dal match delle immagini laterali si può osservare come l'accuratezza decresca a causa del problema intrinseco legato alla tipologia delle immagini stesse, rispetto al cambiamento di prospettiva. Alcuni keypoint sono, però, robusti a fronte di questa tipologia di problema.\\
-Un'ulteriore miglioria apportabile, potrebbe essere quella di definire dei meccanismi di supporto per gestire con questo tipo di problema. 
+Dai risultati ottenuti dal match delle immagini laterali si può osservare come l'accuratezza sia leggermente inferiore rispetto ai valori precedenti, a causa del problema intrinseco legato alla tipologia delle immagini stesse, rispetto al cambiamento di prospettiva. Alcuni keypoint sono, però, robusti rispetto a questa tipologia di problema.\\
+Una possibile miglioria applicabile, potrebbe essere quella di definire dei meccanismi di supporto per gestire i problemi di distorsione e prospettiva.
 
 \subsection{Tempi di esecuzione}
 I tempi di esecuzione ottenuti dai diversi algoritmi di matching sono i seguenti:
@@ -330,14 +335,14 @@ Feature ORB è il metodo di match con tempi di esecuzione più bassi, ma risulta
 \section{Problemi da affrontare}
 Il progetto così strutturato, presenta diverse limitazioni, tra cui:
 \begin{itemize}
-\item Cardinalità del dataset troppo piccola: solo \textbf{40} immagini.
+\item Cardinalità del dataset troppo bassa: solo \textbf{40} immagini.
 \item Immagini "perfette", non rappresentative della realtà.
-\item Analisi effettuata solo attraverso due algoritmi di Feature Matching noti: SIFT e ORB.
+\item Analisi effettuata solo attraverso due algoritmi di Feature Matching noti: SIFT e ORB. % ???
 \item Matching tra  immagini ortopanoramiche e di bitewing con rapporto 1:1 .
 \item Feature Matching effettuato sull'intera immagine ortopanoramica.
 \item Nessun raffinamento per il cambiamento di prospettiva per le immagini di Bitewing laterali.
-\item Nessuna valutazione sul cambiamento nel tempo della confrormazione dell'impronta dentale, sistema non robusto.
-\item Dataset  "semplice", non presenta alcun problema di scala
+\item Nessuna valutazione rispetto al cambiamento nel tempo della confrormazione dell'impronta dentale, sistema non robusto. % ???
+\item Dataset  "semplice", non presenta problemi significativi di scala.
 \end{itemize}
 Dalle conclusioni ottenute dalla prima trattazione del problema, emerge che ogni soluzione proposta, presenta sia aspetti positivi, che aspetti negativi da trattare. In particolare:
 \begin{itemize}
@@ -345,7 +350,7 @@ Dalle conclusioni ottenute dalla prima trattazione del problema, emerge che ogni
 \item \textbf{Template Match}: richiede un tempo intermedio e offre risultati intermedi.
 \item \textbf{SIFT}: notevolmente più lento, ma offre risultati molto migliori.
 \end{itemize}
-Nei seguenti step del progetto, viene affrontato il problema, allo scopo di realizzare una soluzione il più robusta, generale e applicabile possibile.
+Nelle successive fasi progettuali, vengono affrontati i problemi citati, allo scopo di realizzare una soluzione il più robusta, generale e applicabile possibile.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1296,7 +1301,7 @@ Viene, perciò, istanziato un oggetto SIFT, a partire dai metodi definiti nel pu
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Valutazioni}
+\section{Valutazioni}
 L'applicazione di questo algoritmo alle immagini ortopanoramiche, dovrebbe portare a risultati molto più accurati attraverso un'analisi mirata alle sole RoI:
 
 \begin{figure}[H]
@@ -1352,7 +1357,7 @@ Il problema dell'accuracy è legato all'algoritmo di generazione delle maschere.
 Nel seguito, verranno presentate delle ottimizzazioni atte a contrastare questi risultati non attesi.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Problema del singolo match}
+\section{Problema del singolo match}
 Finora, è stata valutata l'accuratezza nei modelli di matching a singola immagine di query. \\
 E' però opportuno considerare anche il caso in cui il sistema possa essere utilizzato nella sua interezza. Infatti, una possibile futura applicazione potrebbe essere quella di fornire in input tutte e tre le immagini di bitewing e valutare così la combinazione dei singoli risultati al fine di individuare l'immagine di match con maggior valore di score totale.\\
 Al fine di ottemperare questo obiettivo, è opportuno ideare un sistema che combini tutte e tre le precedenti valutazioni di match.
@@ -1553,7 +1558,10 @@ I risultati ottenuti sono i seguenti:
 	\label{fig:tempi5}
 \end{figure}
 \end{itemize}
-I valori di accuracy sono migliorati rispetto all'esecuzione corrispondente nello studio precedente, soprattutto per il matching delle immagini frontali che è quasi perfetto già sui valori di Rank@1. Nonostante questo, però, i valori di accuracy con l'esecuzione di questo algoritmo peggiorano rispetto alla stessa valutazione effettuata attraverso l'intera maschera binaria applicata all'immagine ortopanoramica. Questo risultato non è conforme con quanto atteso, visto il raffinamento successivo; l'algoritmo dovrebbe risultare più preciso.
+I valori di accuracy sono migliorati rispetto all'esecuzione corrispondente nello studio precedente, senza ottimizzazioni, soprattutto in riferimento al matching delle immagini frontali che risulta quasi perfetto già sui valori di Rank@1.\\
+Nonostante questo, però, i valori di accuracy con l'esecuzione di questo algoritmo peggiorano rispetto alla stessa valutazione effettuata attraverso l'intera maschera binaria applicata all'immagine ortopanoramica.\\
+Questo risultato non è conforme con quanto atteso, visto il raffinamento successivo; l'algoritmo dovrebbe risultare più preciso.\\
+Di seguito, vengono analizzati nel dettaglio diversi step implementativi atti a risolvere il problema, ottimizzando il sistema.
 
 \subsection{Analisi degli errori di Match}
 Si analizzano, perciò, gli errori di match riscontrati nell'esecuzione degli algoritmi di ricerca per le immagini di Bitewing laterali.\\
@@ -1572,6 +1580,31 @@ In figura vengono riportati alcuni errori di esecuzione dell'algoritmo SIFT:
 \end{figure}
 
 Da queste immagini, evince che l'area di ricerca dei keypoint presenta alcuni errori e conseguentemente l'algoritmo di ricerca non risulta sempre corretto.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Modifica del Ratio test}
+Dall'osservazione diretta dei match individuati, è possibile constatare come la maggior parte di essi appaiano molto vicini l'un l'altro e molto simili tra loro. Molti descrittori, infatti, vengono mappati nello stesso punto di match nell'immagine ortopanoramica corrispondente. Questo problema si manifesta a causa del valore selezionato per il Ratio Test. \\
+Nel contesto del feature matching, il Ratio Test è applicato dopo aver individuato i keypoints, nelle due immagini, e aver calcolato i relativi descrittori. Durante il processo di matching, per ogni descrittore, appartenente ad una delle due immagini,  vengono individuati i descrittori più simili nella seconda immagine.\\
+Questi descrittori simili, sono ordinati in base alla distanza euclidea; il più vicino, ossia il "miglior match", e il secondo più vicino come "secondo miglior match".\\
+Il Ratio Test {\itshape confronta la distanza del miglior match con quella del secondo miglior match} e scarta i match in cui il rapporto tra queste distanze è superiore a una certa soglia (ad esempio 0.75).\\
+E' necessario, perciò, definire il valore più accurato di questo parametro.\\
+Per il dato studio, è opportuno diminuire il valore soglia definito, al fine di:
+\begin{itemize}
+\item \textbf{Ridurre il numero di falsi positivi}: Una soglia inferiore rende il test più selettivo, riducendo la probabilità di accettare corrispondenze deboli o errate, migliorando così la qualità complessiva dei match.
+\item \textbf{Aumentare l'accuratezza del modello}: Nel contesto della Visione Artificiale, avere corrispondenze di qualità è fondamentale per la precisione di applicazioni come il feature matching.
+\item \textbf{Migliorare la robustezza agli errori}: Una selezione più rigida dei match consente di ridurre l’impatto di rumore o variazioni di illuminazione, migliorando la robustezza del sistema.
+\item \textbf{Efficienza computazionale}: Anche se può sembrare controintuitivo, un Ratio Test più basso porta spesso a meno match, riducendo i calcoli necessari per i passaggi successivi (come l'uso dell'algoritmo RANSAC, quando necessario).
+\end{itemize}
+Viene perciò decrementato il valore di Ratio Test a \textbf{0.7}.\\
+
+Grazie a questa miglioria apportata, i valori di accuracy ottenuti attraverso l'algoritmo di matching per le immagini di bitewing SX sono i seguenti:
+\begin{figure}[H]
+	\centering
+	\includegraphics{figures/sx9_1.pdf}
+    	\caption{Accuracy BTW SX Matching Ottimizzato}
+	\label{fig:sx9}
+\end{figure}
+E' possibile, dunque, constatare un netto miglioramento in termini di accuracy.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Dilatazione delle Maschere}
@@ -1633,9 +1666,9 @@ Eseguendo l'algoritmo di matching con applicazione dell'intera maschera dilatata
     	\caption{Accuracy BTW SX Matching Dilated}
 	\label{fig:sx6}
 \end{figure}
-Come è possibile osservare, i risultati sono peggiorati rispetto alla stessa valutazione effettuata su una maschera non dilatata.\\
+Come è possibile osservare, i risultati sono migliorati rispetto alla stessa valutazione effettuata su una maschera non dilatata.\\
 
-Analizzando, però, nel dettaglio gli errori commessi dall'algoritmo, il peggioramento è dovuto all'amplificazione di aree bianche, non appartenenti realmente alla RoI. Infatti, in alcuni casi la rete U-Net utilzzata per l'estrazione delle maschere, identifica anche piccole aree, non appartenenti all'arcata dentale.\\
+Analizzando, però, nel dettaglio gli errori commessi dall'algoritmo, la maggior parte di essi è dovuto all'amplificazione di aree bianche, non appartenenti realmente alla RoI. Infatti, in alcuni casi la rete U-Net utilzzata per l'estrazione delle maschere, identifica anche piccole aree, non appartenenti all'arcata dentale.\\
 In seguito all'operazione di dilatazione, queste aree di outlier, risultanti da un errore prodotto dall'algoritmo di generazione delle maschere, vengono amplificate portando l'algoritmo SIFT a ricercare keypoint, e successivi match, in aree non appartenenti alla zona reale di interesse.\\
 E' opportuno, allora, eliminare le aree di outlier al fine di incentrare l'elaborazione unicamente nell'area di interesse specificata.
 
@@ -1646,12 +1679,7 @@ Una rete UNet può occasionalmente catturare aree esterne vicine ai contorni del
 E' possibile però implementare alcune soluzioni utili ad ignorare le aree esterne alla regione di interesse. Una di queste metodologie applica un'elaborazione di \textbf{Post-Processing} sulle maschere.\\
 Il processo implementato segue due step principali, definiti, rispettivamente, dalle seguenti funzioni:
 \begin{enumerate}
-\item \textbf{post\_process\_mask}:
-\begin{figure}[H]
-    \centering
-    \lstinputlisting[language=Python,label={lst:postprocessing}]{listings/postprocessing.py}
-\end{figure}
-
+\item \textbf{post\_process\_mask}:\\
 La funzione effettua un'operazione di post-processing di una maschera binaria, al fine di rimuovere piccoli componenti di rumore ed eliminare gli oggetti che intersecano i bordi dell'immagine. In particolare, vengono effettate operazioni di:
 \begin{itemize}
 \item \textbf{Rimozione del Rumore attraverso l’Apertura Morfologica}:\\
@@ -1660,6 +1688,10 @@ Viene applicata un'operazione morfologica di {\itshape apertura} utilizzando un 
 La funzione {\itshape connectedComponentsWithStats} individua tutti i componenti connessi (regioni continue di pixel bianchi) e calcola alcuni valori statistici, come l'area e le coordinate. Definisce un'area minima e crea una nuova maschera dove saranno conservati solo i componenti a dimensionalità sufficiente e che non si intersecano con i bordi dell'immagine. Viene iterato questo processo su ogni componente appartenente alla maschera individuato. I componenti che soddisfano entrambi i criteri vengono mantenuti nella maschera filtrata.
 \item Infine, viene restituita la maschera filtrata, che rappresenta la versione post-elaborata della maschera iniziale, pulita dai piccoli componenti indesiderati e priva di regioni confinanti con i bordi.
 \end{itemize}
+\begin{figure}[H]
+    \centering
+    \lstinputlisting[language=Python,label={lst:postprocessing}]{listings/postprocessing.py}
+\end{figure}
 
 Un esempio dei benefici introdotti dalla funzione, è visualizzabile di seguito: 
 \begin{figure}[H]
@@ -1678,7 +1710,8 @@ Un esempio dei benefici introdotti dalla funzione, è visualizzabile di seguito:
     \end{minipage}\hfill
 \end{figure}
 
-\item Questo processamento è utile al fine di ottenere una maschera binaria pulita, in cui vengono eliminati i rumori e gli artefatti, mentre vengono mantenute solo le aree rilevanti. \\
+\item \textbf{remove\_isolated\_gray\_regions}:\\
+Questo processamento è utile al fine di ottenere una maschera binaria pulita, in cui vengono eliminati i rumori e gli artefatti, mentre vengono mantenute solo le aree rilevanti. \\
 Può però succedere, che alcune immagini presentino delle aree grigie erroneamente individuate al di fuori dell'arcata dentale e quindi non appartententi alla RoI. \\
 Viene perciò implementata una funzione che sfrutta la \textbf{Connected Component Analysis}. Questa tecnica identifica le regioni grigie e le filtra in base alla presenza nella loro prossimità di aree bianche. 
 \begin{enumerate}
@@ -1700,9 +1733,9 @@ I risultati ottenuti sono i seguenti:
 	\centering
 	\includegraphics{figures/sx7_1.pdf}
     	\caption{Accuracy Matching BTW SX con Post-Processing}
-	\label{fig:sx6}
+	\label{fig:sx7}
 \end{figure}
-I valori di accuracy sono ora molto migliorati, seppur ancora perfezionabili con ulteriori ottimizzazioni. \\
+I valori di accuracy sono migliorati, seppur ancora perfezionabili con ulteriori ottimizzazioni. \\
 Gli errori di matching che possono essere osservati a questo punto, riguardano l'area di ricerca individuata dalla RoI. Vengono, perciò, applicate delle ottimizzazioni al processo di definizione delle RoI specifiche.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1763,6 +1796,14 @@ L'algoritmo di Matching con SIFT così definito, è molto accurato. Viene implem
 \end{itemize}
 \end{itemize}
 
+I valori di accuracy ottenuti in seguito a questa applicazione sono:
+\begin{figure}[H]
+	\centering
+	\includegraphics{figures/sx11_1.pdf}
+    	\caption{Accuracy Matching BTW SX con RoI ottimizzato}
+	\label{fig:sx11}
+\end{figure}
+Come è possibile osservare, i valori sono leggermente diminuiti. Questa conseguenza, però, è dovuta ad un restringimento dell'area di ricerca. Andando ad analizzare visivamente queste aree, emerge che per alcune di esse sono presenti errori nelle porzioni bianche. I casi di errore più frequenti si riscontrano nelle immagini ortopanoramiche estreme, con valori di luminosità molto alti o con variazioni di luminosità molto accentuate o in cui le regioni di presenza di denti sono piccole e lontane o addirittura assenti.
 %I risultati di accuracy, ottenuti attraverso l'applicazione delle ottimizzazioni descritte, sono i seguenti:
 %\begin{figure}[H]
 %	\centering
@@ -1772,40 +1813,18 @@ L'algoritmo di Matching con SIFT così definito, è molto accurato. Viene implem
 %\end{figure}
 %Seppur migliorati, presentano ancora risultati non ottimi soprattutto in relazione ai valori di Rank@1.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Modifica del Ratio test}
-Dall'osservazione diretta dei match individuati, è possibile constatare come la maggior parte di essi appaiano molto vicini l'un l'altro e molto simili tra loro. Molti descrittori, infatti, vengono mappati nello stesso punto di match nell'immagine ortopanoramica corrispondente. Questo problema si manifesta a causa del valore selezionato per il Ratio Test. \\
-Nel contesto del feature matching, il Ratio Test è applicato dopo aver individuato i keypoints, nelle due immagini, e aver calcolato i relativi descrittori. Durante il processo di matching, per ogni descrittore, appartenente ad una delle due immagini,  vengono individuati i descrittori più simili nella seconda immagine.\\
-Questi descrittori simili, sono ordinati in base alla distanza euclidea; il più vicino, ossia il "miglior match", e il secondo più vicino come "secondo miglior match".\\
-Il Ratio Test {\itshape confronta la distanza del miglior match con quella del secondo miglior match} e scarta i match in cui il rapporto tra queste distanze è superiore a una certa soglia (ad esempio 0.75).\\
-E' necessario, perciò, definire il valore più accurato di questo parametro.\\
-Per il dato studio, è opportuno diminuire il valore soglia definito, al fine di:
-\begin{itemize}
-\item \textbf{Ridurre il numero di falsi positivi}: Una soglia inferiore rende il test più selettivo, riducendo la probabilità di accettare corrispondenze deboli o errate, migliorando così la qualità complessiva dei match.
-\item \textbf{Aumentare l'accuratezza del modello}: Nel contesto della Visione Artificiale, avere corrispondenze di qualità è fondamentale per la precisione di applicazioni come il feature matching.
-\item \textbf{Migliorare la robustezza agli errori}: Una selezione più rigida dei match consente di ridurre l’impatto di rumore o variazioni di illuminazione, migliorando la robustezza del sistema.
-\item \textbf{Efficienza computazionale}: Anche se può sembrare controintuitivo, un Ratio Test più basso porta spesso a meno match, riducendo i calcoli necessari per i passaggi successivi (come l'uso dell'algoritmo RANSAC, quando necessario).
-\end{itemize}
-Viene perciò decrementato il valore di Ratio Test a \textbf{0.7}.\\
 
-Grazie a queste migliorie apportate, i valori di accuracy ottenuti attraverso l'algoritmo di matching per le immagini di bitewing SX sono i seguenti:
-\begin{figure}[H]
-	\centering
-	\includegraphics{figures/sx9_1.pdf}
-    	\caption{Accuracy BTW SX Matching Ottimizzato}
-	\label{fig:sx9}
-\end{figure}
-I risultati di accuracy così ottenuti, sono complessivamente migliorati.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Ottimizzazione maschere}
-Immagini come quella sotto riportata presentano un livello di luminosità talmente elevato, da rendere difficile l'individuazione dei singoli denti anche all'occhio umano. \\
-L'algoritmo di generazione delle maschere, in casi come questo, non è in grado di estrarre correttamente l'immagine binaria corrispondente.
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=12cm]{figures/ds\_6\_img\_176.pdf}
     	\caption{Luminosità Elevata}
 	\label{fig:luminosità}
 \end{figure}
+Immagini come quella sopra riportata presentano un livello di luminosità talmente elevato, da rendere difficile l'individuazione dei singoli denti anche all'occhio umano. \\
+L'algoritmo di generazione delle maschere, in casi come questo, non è in grado di estrarre correttamente l'immagine binaria corrispondente.
+
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=12cm]{figures/ds\_6\_img\_176_mask.pdf}
@@ -1851,12 +1870,18 @@ Infatti, la maschera corrispondente all'esempio precedente, ora risulta perfetta
 \section{Risultati ottenuti}
 I risultati che ora vengono presentati, sono il prodotto dell'applicazione e combinazione di tutti i processi di ottimizzazione precedentemente descritti. Anche l'ordine di applicazione è molto importante al fine del raggiungimento dei massimi risultati. Vengono, perciò, realizzati i seguenti passi computazionali:
 \begin{enumerate}
-\item \textbf{Pre-processing delle immagini ortopanoramiche}: al fine di migliorare il contrasto e uniformare la luminosità delle immagini. I valori che vengono impostati sono: {\itshape target\_luminosity=50}, {\itshape clipLimit=1.0}, {\itshape titleGridSize=(8,8)}.
-\item \textbf{Estrazione delle maschere binarie}: attraverso l'esecuzione della seconda rete neurale, la rete U-Net.
-\item \textbf{Post-processing delle maschere}: al fine di eliminare le aree erroneamente catturate durante il processo di generazione delle maschere. Viene prima eseguita la funzione {\itshape post\_process\_mask} e successivamente, la funzione {\itshape remove\_isolated\_gray\_regions}.
-\item \textbf{Dilatazione delle maschere}: al fine di catturare keypoint significativi, come bordi e zone di confine. Viene impostato un valori di {\itshape dilation\_size} pari a 20.
-\item \textbf{Definizione delle RoI attraverso i valori di coordinate}: rispettivamente, per le immagini di bitewing sinistro, destro e frontali. Per le prime due, viene definito {\itshape x\_mid = width //2} e considerata rispettivamente la parte a sinistra e a destra rispetto tale punto, mentre per la terza tipologia di immagini, viene considerato il 20\% della larghezza dell'immagine, centrato in x\_mid.
-\item \textbf{Esecuzione dell'algoritmo SIFT}: con valori di {\itshape Lowe's Ratio Test} pari a 0.7.
+\item \textbf{Pre-processing delle immagini ortopanoramiche}:\\
+Al fine di migliorare il contrasto e uniformare la luminosità delle immagini; i valori che vengono impostati sono: {\itshape target\_luminosity=50}, {\itshape clipLimit=1.0}, {\itshape titleGridSize=(8,8)}.
+\item \textbf{Estrazione delle maschere binarie}: \\
+Attraverso l'esecuzione della seconda rete neurale, la rete U-Net.
+\item \textbf{Post-processing delle maschere}: \\
+Al fine di eliminare le aree erroneamente catturate durante il processo di generazione delle maschere. Viene prima eseguita la funzione {\itshape post\_process\_mask} e successivamente, la funzione {\itshape remove\_isolated\_gray\_regions}.
+\item \textbf{Dilatazione delle maschere}: \\
+Al fine di catturare keypoint significativi, come bordi e zone di confine. Viene impostato un valori di {\itshape dilation\_size} pari a 20.
+\item \textbf{Definizione delle RoI attraverso i valori di coordinate}: \\
+Rispettivamente, per le immagini di bitewing sinistro, destro e frontali. Per le prime due, viene definito {\itshape x\_mid = width //2} e considerata rispettivamente la parte a sinistra e a destra rispetto tale punto, mentre per la terza tipologia di immagini, viene considerato il 20\% della larghezza dell'immagine, centrato in x\_mid.
+\item \textbf{Esecuzione dell'algoritmo SIFT}:\\
+Con valori di {\itshape Lowe's Ratio Test} pari a 0.7.
 \end{enumerate}
 I risultati così ottenuti, sono confrontati con quelli prodotti dall'applicazione dell'algoritmo SIFT, con il medesimo valore di Lowe's test, sul dataset delle 2309 immagini ortopanoramiche, senza ausilio di nessun tipo di ottimizzazione.
 \begin{figure}[H]
@@ -1870,7 +1895,7 @@ I risultati così ottenuti, sono confrontati con quelli prodotti dall'applicazio
 	\includegraphics{figures/dx6_1.pdf}
     	\caption{Accuracy BTW dx Matching Ottimizzato}
 	\label{fig:dxopt}
-\end{figure}+\begin{figure}[H]
+\end{figure}\begin{figure}[H]
 	\centering
 	\includegraphics{figures/sx10_1.pdf}
     	\caption{Accuracy BTW sx Matching Ottimizzato}
@@ -1892,6 +1917,384 @@ Perciò, eseguendo l'algoritmo di unione di match, attraverso i passi computazio
     	\caption{Accuracy Unione di Match Ottimizzato}
 	\label{fig:unioneopt}
 \end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Discussione risultati}
+%\hspace*{-1cm} % Sposta la tabella verso sinistra di 1 cm
+\begin{table}[ht]
+    \centering
+    \renewcommand{\arraystretch}{2}
+    % Definizione di un colore personalizzato (facoltativo)
+    \definecolor{headercolor}{RGB}{220, 230, 241}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|}
+    \hline
+   \rowcolor{headercolor} % Colore dell'intestazione
+    \textbf{\makecell{Uso\\masks}} & \textbf{\makecell{Rete\\generaz.\\masks}} & \textbf{\makecell{Pre-proc.\\OPT}} & \textbf{\makecell{Post-proc.\\masks}} & \textbf{Dilataz.} & \textbf{\makecell{Area\\Ricerca}} & \textbf{\makecell{Tecnica\\def.\\RoI}} & \textbf{\makecell{Ratio\\Test}} & \textbf{\makecell{Rank\\@1}} & \textbf{\makecell{Rank\\@3}} & \textbf{\makecell{Rank\\@5}} & \textbf{\makecell{Tempi\\(s/it)}} \\
+    \hline
+    
+    no & / & no & no & no & \makecell{intera\\opt} & / & 0.85 & 0.75 & 0.86 & 0.86 & 14\\
+    \hline
+    si & $1^a$ & no & no & no & \makecell{area\\dentale} & / & 0.85 & 0.61 & 0.73 & 0.76 & 6.6\\
+    \hline
+    si &  $1^a$ & no & no & no & \makecell{RoI} & $1^a$ & 0.85 & 0.4 & 0.68 & 0.74 & 5.2\\
+    \hline
+    si & $2^a$ & no & no & no & \makecell{area\\dentale} & / & 0.85 & 0.73 & 0.84 & 0.87 & 8.4\\
+    \hline
+    si & $2^a$ & no & no & no & \makecell{RoI} & $1^a$ & 0.85 & 0.49 & 0.73 & 0.80 & 6.0\\
+    \hline
+    si & $2^a$ & no & no & no & \makecell{area\\dentale} & / & 0.70 & 0.75 & 0.86 & 0.88 & 6.8\\
+    \hline
+    si &  $2^a$ & no & no & no & \makecell{RoI} & $1^a$ & 0.70 & 0.75 & 0.84 & 0.86 & 5.4 \\
+    \hline
+    si & $2^a$ & no & no & si & \makecell{area\\dentale} & / & 0.70 & 0.78 & 0.86 & 0.88 & 7.8\\
+    \hline
+    si & $2^a$ & no & si & si & \makecell{area\\dentale} & / & 0.70 & 0.78 & 0.87 & 0.88 & 7.8\\
+    \hline
+     si & $2^a$ & no & si & si & \makecell{RoI} & $2^a$ & 0.70 & 0.76 & 0.86 & 0.89 & 5.4\\
+    \hline
+    \rowcolor{yellow}
+    \textbf{si} & \textbf{$2^a$} & \textbf{si} &\textbf{si} & \textbf{si} & \textbf{RoI} & \textbf{$2^a$} & \textbf{0.7} & \textbf{0.78} & \textbf{0.88} & \textbf{0.9} & \textbf{5.0}\\
+    \hline
+\end{tabular}%
+}
+\caption{Valori di accuracy Matching con BTW SX}
+    \label{tab:accsx}
+\end{table}
+
+Tutti i risultati sopra riportati, si riferiscono al dataset aumentato di cardinalità e a cui è stato applicato il ridimensionamento delle singole immagini ortopanoramiche. La tabella sintetizza, perciò, i risultati di accuracy ottenuti per le immagini di Bitewing sinistro, a cui sono stati applicati algoritmi di ottimizzazione successivi.\\
+A partire dal miglior risultato ottenuto e, di conseguenza, dall'algoritmo risulantante, è possibile analizzare visivamente i casi di match errati, per i quali l'algoritmo non è in grado di riconoscere il corretto match nelle prime cinque posizioni.\\
+Da questi risultati, è possibile constatare la difficoltà da parte dell'algoritmo SIFT nell'identificare i keypoint in alcune immagini e, conseguentemente, i relativi match nelle immagini ortopanoramiche.\\
+E' possibile, allora, modificare direttamente i parametri propri di SIFT, i quali definiscono i valori di soglia utili all'identificazione dei keypoint. In particolare, la creazione dell'algoritmo SIFT, è regolata da 5 parametri principali:
+\begin{enumerate}
+\item \textbf{nfeatures}:\\
+Definisce il numero massimo di keypoints che l'algoritmo SIFT cercherà di individuare. Il valore di default è {\itshape 0}; ossia, cercherà di rilevare quanti più keypoints possibile.
+\item \textbf{nOctaveLayers}:\\
+Definisce il numero di strati in ogni ottava.  Il valore di default è {\itshape 3}. Ogni "ottava" rappresenta un livello di scala nel processo di rilevazione delle feature; un'ottava rappresenta il ridimensionamento dell'immagine. Gli strati rappresentano ulteriori livelli intermedi all'interno di ciascuna ottava, calcolati attraverso vari filtri Gaussiani. Aumentare questo valore permette di rilevare più keypoints in piccole scale ma aumenta conseguentemente il tempo di calcolo.
+\item \textbf{contrastThreshold}:\\
+Definisce il valore di soglia al fine di filtrare le feature deboli nelle regioni di basso contrasto. Il valore di default è {\itshape 0.04}. L'obiettivo consiste nel filtrare i keypoints che hanno un contrasto inferiore al valore specificato. Un valore più basso consente di rilevare più feature anche in zone di basso contrasto, ma potrebbe includere più rumore.
+\item \textbf{edgeThreshold}:\\
+Definisce il valore di soglia al fine di filtrare feature appartenenti a linee o bordi. Il valore di default è {\itshape 10}. SIFT tende a scartare i keypoints che si trovano vicino a bordi prominenti, poiché questi punti non risultano sufficientemente robusti. Valori più alti rendono il filtro meno severo; aumentare questo valore, consente di rilevare più feature, ma riduce la qualità e robustezza delle stesse.
+\item \textbf{sigma}:\\
+Definisce il valore di deviazione standard del filtro Gaussiano applicato nell'ottava iniziale. Il valore di default è {\itshape1.6}. Valori diversi di questo parametro, consentono di controllare il grado di sfocatura applicata all'immagine all'inizio del processo SIFT. La sfocatura Gaussiana è utilizzata per ridurre il rumore e aumentare la stabilità dei keypoints rilevati. Valori più alti aumentano la sfocatura, rendendo il rilevatore meno sensibile al rumore ma potenzialmente perdendo dettagli più fini.
+\end{enumerate}
+
+E' possibile osservare, inoltre, l'alta frequenza nei casi di match errati di punti di outlier; alcuni "good matches" individuati dal metodo KNN matching possono essere erronei, ovvero consistono in punti che non corrispondono realmente tra le due immagini. \\
+Viene utilizzato, allora, \textbf{RANSAC} (RANdom SAmple Consensus) al fine di individuare un'omografia che rappresenti una trasformazione tra i punti dell'immagine di origine e i punti dell'immagine di destinazione, filtrando gli outlier e mantenendo solo i match corretti (inlier).
+\begin{itemize}
+\item \textbf{H, mask = cv2.findHomography(src\_pts, dst\_pts, cv2.RANSAC, 5.0)}
+\begin{itemize}
+\item src\_pts: Set di coordinate dei keypoints dalla prima immagine (query image).
+\item dst\_pts: Set di coordinate dei keypoints dalla seconda immagine (opt image).
+\item cv2.RANSAC: Specifica l'utilizzo dell'algoritmo RANSAC per calcolare l'omografia.
+\item 5.0: Rappresenta la soglia di errore massima (in pixel) per considerare un punto come inlier. I match con errore superiore a 5 pixel sono considerati outlier.
+\end{itemize}
+\end{itemize}
+Il processo si svolge come segue:
+\begin{itemize}
+\item \textbf{Campionamento casuale}: RANSAC seleziona casualmente un sottogruppo di punti corrispondenti.
+\item \textbf{Calcolo dell'omografia}: Calcola una possibile trasformazione (omografia) tra le due immagini basata sul sottogruppo selezionato.
+\item \textbf{Verifica degli inlier}: Verifica quanti punti del dataset totale sono consistenti con questa trasformazione (ovvero rientrano entro il margine di errore definito, 5.0).
+\item \textbf{Iterazione}: Ripete il processo molte volte, cercando di massimizzare il numero di inlier.
+\item \textbf{Selezione finale}: Restituisce la trasformazione con il maggior numero di inlier, filtrando i match che risultano essere outlier. Il risultato di cv2.findHomography include:
+\begin{enumerate}
+\item \textbf{H}: La matrice di omografia 3x3 che rappresenta la trasformazione tra le due immagini.
+\item \textbf{mask}: Un array binario che indica quali match sono considerati inlier (1) e quali outlier (0).
+\end{enumerate}
+\end{itemize}
+
+Di seguito, vengono riportati i valori di accuracy registrati in seguito alla modifica di questi parametri:
+\newpage
+
+%\begin{table}[ht]
+%    \centering
+\renewcommand{\arraystretch}{1.5}
+% Definizione di un colore personalizzato (facoltativo)
+\definecolor{headercolor}{RGB}{220, 230, 241}
+
+\begin{longtable}{|c|c|c|c|c|c|c|c|}
+    \hline
+    \rowcolor{headercolor} % Colore dell'intestazione
+    \textbf{\makecell{nOctave\\Layers}} & \textbf{\makecell{contrast\\Threshold}} & \textbf{\makecell{edge\\Threshold}} & \textbf{RANSAC} & \textbf{\makecell{Rank\\@1}} & \textbf{\makecell{Rank\\@3}} & \textbf{\makecell{Rank\\@5}} & \textbf{\makecell{Tempi\\(s/it)}} \\
+    \hline
+    \rowcolor{yellow}
+    \textbf{4} & \textbf{0.04} & \textbf{10} &\textbf{si (2.0)} & \textbf{0.83} & \textbf{0.90} & \textbf{0.91} & \textbf{6.6}\\
+
+    \hline
+    \textbf{4} & \textbf{0.02} & \textbf{15} &\textbf{si} & \textbf{0.84} & \textbf{0.91} & \textbf{0.93} & \textbf{10.2}\\
+    \hline
+    {4} & {0.04} & {10} &{si(3.0)} & {0.82} & {0.90} & {0.91} & {6.6}\\
+    \hline
+    {3} & {0.04} & {10} &{si(2.0)} & {0.82} & {0.90} & {0.91} & {6.6}\\
+    \hline
+    
+    {4} & {0.04} & {10} &{si} & {0.81} & {0.90} & {0.91} & {6.6}\\
+    \hline
+    {5} & {0.04} & {10} &{si(2.0)} & {0.77} & {0.88} & {0.89} & {6.6}\\
+    \hline
+    
+    
+     4 & 0.04 & 15 & si & 0.78 & 0.89 & 0.91 & 7.2\\
+     \hline 
+     4 & 0.04 & 10 & si (4.0) & 0.82 & 0.90 & 0.91 & 7.2\\
+     
+     \hline 
+     4 & 0.04 & 15 & si (4.0) & 0.77 & 0.89 & 0.90 & 7.8\\
+     \hline 
+     4 & 0.04 & 15 & si (3.0) & 0.79 & 0.89 & 0.91 & 7.8\\
+     \hline 
+     4 & 0.04 & 15 & si (2.0) & 0.80 & 0.87 & 0.89 & 7.8\\
+     
+    \hline
+     5 & 0.04 & 10 & si & 0.81 & 0.89 & 0.90 & 6.6\\
+    \hline
+     3 & 0.01 & 20 & si & 0.79 & 0.88 & 0.89 & 18.0\\
+    \hline
+    3 & 0.01 & 15 & si & 0.78 & 0.86 & 0.88 & 18.0\\
+    \hline
+    3 & 0.02 & 10 & no & 0.80 & 0.88 & 0.88 & 10.8\\
+    \hline
+    3 & 0.02 & 10 & si & 0.81 & 0.90 & 0.90 & 10.8\\
+    \hline
+     3 & 0.04 & 20 & no & 0.79 & 0.87 & 0.90 & 7.2\\
+    \hline
+    4 & 0.02 & 15 & no & 0.82 & 0.89 & 0.92 & 12.6\\
+    \hline
+    4 & 0.04 & 20 & no & 0.77 & 0.89 & 0.92 & 7.2\\
+    \hline
+    4 & 0.02 & 20 & no & 0.75 & 0.89 & 0.90 & 12.0\\
+    \hline
+    3 & 0.04 & 20 & si (3.0) & 0.79 & 0.90 & 0.91 & 7.8\\
+    \hline
+    4 & 0.04 & 20 & si (3.0) & 0.78 & 0.89 & 0.91 & 7.8\\
+   \hline
+    3 & 0.02 & 20 & si (2.0) & 0.80 & 0.88 & 0.89 & 12.7\\
+   \hline
+    3 & 0.02 & 20 & si (3.0) & 0.81 & 0.89 & 0.89 & 12.7\\
+   \hline
+    3 & 0.02 & 15 & no & 0.78 & 0.88 & 0.91 & 12.6\\
+   \hline    
+    3 & 0.04 & 15 & no & 0.79 & 0.89 & 0.90 & 7.2\\
+    \hline
+    3 & 0.04 & 15 & si & 0.80 & 0.89 & 0.91 & 7.2\\
+    \hline
+    3 & 0.02 & 15 & si & 0.80 & 0.89 & 0.89 & 12.6\\
+    \hline
+    3 & 0.02 & 20 & si & 0.79 & 0.88 & 0.91 & 7.2\\
+    \hline
+    3 & 0.02 & 30 & no & 0.80 & 0.88 & 0.89 & 7.2\\
+    \hline
+    3 & 0.02 & 10 & si & 0.78 & 0.88 & 0.88 & 7.2\\
+    \hline
+    3 & 0.01 & 20 & no & 0.76 & 0.85 & 0.86 & 18.0\\
+    \hline
+    3 & 0.04 & 10 & si & 0.78 & 0.89 & 0.90 & 6.6\\
+    \hline
+    3 & 0.02 & 20 & no & 0.83 & 0.90 & 0.90 & 12.7\\
+    \hline
+
+\caption{Valori di accuracy Matching con BTW SX}
+\label{tab:accsx}
+\end{longtable}
+
+%\end{table}
+
+Tra tutte le configurazioni, quella che permette di ottenere risultati più accurati è la seconda, a discapito, però, dei tempi di esecuzione che risultano quasi raddoppiati. Come è possibile evincere dai dati, il fattore più incisivo sui tempi di esecuzione delle iterazioni è il valore di {\itshape contrastThreshold}, che a valori più bassi, risulta più permissivo in quanto permette di rilevare più feature anche in zone di basso contrasto.\\
+Un ottimo compromesso, perciò, è dato dalla prima configurazione che permette di ottenere risultati quasi allo stesso livello di accuratezza, senza inficiare sui tempi di esecuzione.\\
+Con questa esecuzione vengono calcolati anche i valori di accuracy per le immagini di bitewing destro e per le immagini frontali; i valori ottenuti, confrontati con quelli riportati in ultimo nel capitolo precedente, sono i seguenti:
+\begin{figure}[H]
+	\centering
+	\includegraphics{figures/frontal7_1.pdf}
+    	\caption{Accuracy Frontal Matching ottimizzato e RANSAC}
+	\label{fig:frontalransac}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics{figures/dx7_1.pdf}
+    	\caption{Accuracy BTW dx Matching ottimizzato e RANSAC}
+	\label{fig:dxransac}
+\end{figure}\begin{figure}[H]
+	\centering
+	\includegraphics{figures/sx12_1.pdf}
+    	\caption{Accuracy BTW sx Matching ottimizzato e RANSAC}
+	\label{fig:sxransac}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics{figures/tempi7_1.pdf}
+    	\caption{Tempi Matching ottimizzato e RANSAC}
+	\label{fig:tempiransac}
+\end{figure}
+I valori di accuracy ottenuti sono migliorati, soprattutto in relazione al matching delle immagini di bitewing sinistro. Complessivamente, i valori registrati sono molto alti e i tempi di esecuzione richiesti per singola iterazione bassi.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Approfondimento}
+
+%%%%%%%%%%%%%%%%%%%%%5
+\section{SURF}
+\textbf{SURF} (Speeded-Up Robust Features) è un algoritmo di feature detection e feature matching utilizzato allo scopo di identificare {\itshape keypoint} all'interno di un'immagine e descriverne le feature attraverso la definizione di {\itshape feature descriptors}. È progettato per essere più veloce e meno computazionalmente intensivo rispetto al'algoritmo SIFT, pur mantenendo intatta la robustezza.\\
+Per individuare i keypoint all'interno dell'immagine, SURF utilizza una variante della trasformata di Haar wavelet, con box filter approssimati. La determinazione dei blob si basa sul calcolo del determinante della matrice Hessiana, che misura la variazione di intensità in una regione locale. Questo calcolo è rapido, grazie all'uso di immagini integrali, che semplificano le operazioni di somma nei box filter.\\
+I punti di interesse sono scalati in maniera simile a SIFT, ma con una maggiore ottimizzazione computazionale.\\
+Intorno a ciascun keypoint, SURF costruisce un descrittore basato sull'intensità dei gradienti. Invece di utilizzare gradienti diretti, come in SIFT, SURF calcola risposte Haar wavelet orizzontali e verticali in una regione locale.
+Questo descrittore è progettato per essere compatto (solitamente 64 dimensioni, anziché le 128 di SIFT) e per catturare le informazioni essenziali sulla direzione e il contrasto. Esiste, però, anche la versione estesa che calcola descrittori a 128-element.\\
+SURF è robusto contro trasformazioni come rotazioni, cambi di scala e variazioni di illuminazione; inoltre, l'utilizzo di immagini integrali e box filter lo rende significativamente più veloce rispetto a SIFT.\\
+Nonostante questo, però, SURF è meno accurato di SIFT in alcuni scenari, come in presenza di dettagli complessi o grandi cambiamenti di prospettiva.\\
+Sintetizzando le principali differenze tra i due importanti algoritmi di feature matching è possibile riassumere quanto segue:
+\begin{table}[ht]
+    \centering
+    \renewcommand{\arraystretch}{3}
+    % Definizione di un colore personalizzato (facoltativo)
+    \definecolor{headercolor}{RGB}{220, 230, 241}
+\begin{tabular}{|c|c|c|}
+    \hline
+   \rowcolor{headercolor} % Colore dell'intestazione
+    Caratteristica & \textbf{SIFT} & \textbf{SURF}\\
+    \hline
+    \textbf{Velocità} & Più lento & Più veloce \\
+    \hline
+    \textbf{Descrittore} & 128 dimensioni & 64/128 dimensioni \\
+    \hline
+    \textbf{Rilevazione} & \makecell{Estremi di differenza\\ di Gauss} & \makecell{Determinante della \\matrice Hessiana} \\
+    \hline
+    \textbf{Robustezza} & \makecell{Eccellente per cambi\\ di scala} & \makecell{Buona, ma inferiore\\ a SIFT} \\
+    \hline
+    \textbf{Invarianza} & \makecell{Scala, rotazione, \\illuminazione} & \makecell{Scala, rotazione,\\ illuminazione} \\
+    \hline
+    \textbf{\makecell{Prestazioni su \\texture complesse}} & Migliore & Può perdere dettagli \\
+    \hline
+\end{tabular}
+\caption{Confronto tra SIFT e SURF}
+\label{tab:SIFTeSURF}
+\end{table}
+
+Viene, perciò, implementato l'algoritmo SURF al fine di identificare le immagini ortopanoramiche.\\
+Vengono mantenute tutte le ottimizzazioni studiate nei capitoli precedenti, in sequenza:
+\begin{enumerate}
+\item \textbf{Pre-processing delle immagini ortopanoramiche}.
+\item \textbf{Estrazione delle maschere binarie}.
+\item \textbf{Post-processing delle maschere}.
+\item \textbf{Dilatazione delle maschere}.
+\item \textbf{Definizione delle RoI attraverso i valori di coordinate}.
+\item \textbf{Esecuzione dell'algoritmo SURF}, con valori di {\itshape Lowe's Ratio Test} pari a 0.7.
+\item \textbf{Utilizzo di RANSAC per l'eliminazione del rumore}.
+\end{enumerate}
+La costruzione dell'oggetto SURF è vincolato dalla definizione di alcuni parametri principali, ossia:
+\begin{enumerate}
+    \item \textbf{hessianThreshold}:\\
+Questo parametro specifica la soglia per il filtro di Hessian, che determina la sensibilità del rilevamento dei keypoint. Il valore predefinito è {\itshape 100.0}. Valori bassi, rilevano più keypoint, aumentando la sensibilità e conseguentemente il rumore. Valori alti, invece, rilevano meno keypoint, portando ad un sistema meno sensibile, ma più robusto.
+\item \textbf{nOctaves}:\\
+Specifica il numero di ottave da analizzare durante il rilevamento dei keypoint. Ogni ottava corrisponde a un livello di scala successivo. Il valore predefinito è {\itshape 4}. Valori più alti permettono di rilevare keypoint su scale più grandi, portando però alla definizione di un sistema più lento, ma più dettagliato. Viceversa, valori più bassi, riducono il tempo di calcolo e creano un sistema più veloce, ma meno dettagliato.
+\item \textbf{nOctaveLayers}:\\
+Determina il numero di strati per ogni ottava; gli strati saffinano il rilevamento dei keypoint. Il valore predefinito è {\itshape 3}.Aumentare il numero di strati può migliorare la precisione, ma aumenta il tempo di calcolo.Al contrario, ridurre il numero di strati velocizza il processo di individuazione.
+\item \textbf{extended}:\\
+Questo parametro booleano indica se usare la versione dei descrittori estesa (128 dimensioni) invece dei descrittori standard (64 dimensioni). Il valore predefinito è {\itshape False} (descrittori standard). Utilizzando descrittori più piccoli l'effetto è un algoritmo di matching più veloce ma meno dettagliato. Impostando il valore a True, invece, si ottiene un confronto più dettagliato ma più lento.
+\item \textbf{upright (U-SURF)}:\\
+Esso specifica se i descrittori devono essere invarianti rispatto alla rotazione. Il valore predefinito è {\itshape False} (descrittori invarianti alla rotazione); in questo modo, il descrittore considera l'orientamento dei keypoint. Impostando il valore booleano a True, si ottiene, viceversa, un descrittore più veloce, ma sensibile alla rotazione.
+\end{enumerate}
+Sono state effettuate diverse valutazioni al fine di identificare la configurazione ottimale per la data tipologia di immagini. I risultati ottenuti, dalle esecuzioni successive, sono riportati di seguito:
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{2}
+    % Definizione di un colore personalizzato (facoltativo)
+    \definecolor{headercolor}{RGB}{220, 230, 241}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
+    \hline
+   \rowcolor{headercolor} % Colore dell'intestazione
+    \textbf{extended} & \textbf{upright} & \textbf{\makecell{hessian\\Threshold}}& \textbf{nOctave} & \textbf{\makecell{nOctave\\Layers}} & 
+    \textbf{RANSAC} & \textbf{Matcher} & \textbf{\makecell{Rank\\@1}} & \textbf{\makecell{Rank\\@3}} & \textbf{\makecell{Rank\\@5}} & \textbf{\makecell{Tempi\\(s/it)}} \\
+    \hline
+    \rowcolor{yellow}
+    \textbf{True} & \textbf{True} & \textbf{600} & \textbf{5} & \textbf{4} & \textbf{3.0} & \textbf{BF} & \textbf{0.79} & \textbf{0.86} & \textbf{0.87} & \textbf{1.8}\\
+    \hline
+    False & False & 100 & 4 & 3 & 7.0 & FLANN & 0.5 & 0.62 & 0.67 & 16.8\\
+    \hline
+    False & False & 100 & 4 & 3 & 5.0 & FLANN & 0.49 & 0.62 & 0.67 & 16.8\\
+    \hline
+    True & False & 100 & 4 & 3 & 5.0 & FLANN & 0.55 & 0.65 & 0.65 & 16.2\\
+    \hline
+    True & False & 0 & 4 & 3 & 4.0 & FLANN & 0.19 & 0.31 & 0.44 & 30.2\\
+    \hline
+    True & True & 100 & 4 & 3 & 4.0 & FLANN & 0.51 & 0.75 & 0.78 & 18.6\\
+    \hline
+    True & True & 100 & 4 & 3 & 2.0 & FLANN & 0.50 & 0.75 & 0.79 & 19.2\\
+    \hline
+    True & True & 500 & 4 & 3 & 3.0 & BF & 0.73 & 0.85 & 0.85 & 2.4\\
+    \hline
+    True & False & 500 & 4 & 3 & 3.0 & BF & 0.59 & 0.69 & 0.71 & 2.4\\
+    \hline
+    True & True & 500 & 5 & 4 & 3.0 & BF & 0.79 & 0.86 & 0.86 & 2.4\\
+    \hline
+    True & True & 500 & 5 & 4 & 2.0 & BF & 0.76 & 0.85 & 0.86 & 2.4\\
+    \hline
+    True & True & 1000 & 4 & 3 & 3.0 & BF & 0.74 & 0.80 & 0.80 & 0.6\\
+    \hline
+    True & True & 0 & 4 & 3 & 3.0 & BF & 0.29 & 0.58 & 0.64 & 3.0\\
+    \hline
+    True & True & 1000 & 5 & 4 & 3.0 & BF & 0.77 & 0.83 & 0.87 & 1.2\\
+    \hline
+    True & True & 400 & 5 & 4 & 3.0 & BF & 0.75 & 0.83 & 0.83 & 2.4\\
+    \hline
+    True & True & 600 & 4 & 3 & 3.0 & BF & 0.76 & 0.83 & 0.84 & 1.8\\
+    \hline
+    True & True & 600 & 6 & 5 & 3.0 & BF & 0.77 & 0.86 & 0.86 & 2.4\\
+    \hline
+    True & True & 600 & 5 & 5 & 3.0 & BF & 0.77 & 0.86 & 0.86 & 2.4\\
+    \hline
+    True & True & 600 & 5 & 4 & 5.0 & BF & 0.79 & 0.86 & 0.86 & 1.8\\
+    \hline
+    True & True & 600 & 5 & 4 & 2.0 & BF & 0.78 & 0.86 & 0.87 & 1.8\\
+    \hline
+    True & True & 600 & 5 & 4 & 4.0 & BF & 0.78 & 0.86 & 0.86 & 1.8\\
+    \hline
+    \rowcolor{yellow}
+    True & True & 700 & 5 & 4 & 3.0 & BF & 0.79 & 0.86 & 0.87 & 1.8\\
+    \hline
+    True & True & 800 & 5 & 4 & 3.0 & BF & 0.77 & 0.83 & 0.84 & 1.8\\
+    \hline
+    \rowcolor{yellow}
+    True & True & 600 & 4 & 4 & 3.0 & BF & 0.79 & 0.86 & 0.87 & 1.8\\
+    \hline
+    True & True & 600 & 4 & 5 & 3.0 & BF & 0.77 & 0.85 & 0.86 & 1.8\\
+    \hline
+\end{tabular}%
+}
+\caption{Valori di accuracy Matching con BTW SX}
+    \label{tab:accsx}
+\end{table}
+
+
+I tempi di esecuzione sono veramente sorprendenti, vista l'ottimalità dei valori di accuracy ottenuti. La velocità dell'algoritmo è dovuta all'utilizzo del \textbf{BFMatcher}, che permette un confronto più semplice rispetto al FlannMatcher.\\
+Utilizzando la prima configurazione, i risultati ottenuti dai match delle immagini di bitewing destro e frontali sono i seguenti:
+
+\begin{figure}[H]
+	\centering	\includegraphics{figures/frontal8_1.pdf}
+    	\caption{Accuracy Frontal Matching con SURF}
+	\label{fig:frontalSURF}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics{figures/dx8_1.pdf}
+    	\caption{Accuracy BTW dx Matching con SURF}
+	\label{fig:dxSURF}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics{figures/sx13_1.pdf}
+    	\caption{Accuracy BTW sx Matching con SURF}
+	\label{fig:sxSURF}
+\end{figure}
+\begin{figure}[H]
+	\centering	\includegraphics{figures/tempi8_1.pdf}
+    	\caption{Tempi Matching con SURF}
+	\label{fig:tempiSURF}
+\end{figure}
+
+
+
+
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Conclusioni}

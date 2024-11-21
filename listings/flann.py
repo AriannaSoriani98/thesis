@@ -9,7 +9,7 @@ def match_images(des1, des2, method='FLANN'):
     # Ratio test to filter good matches
     good_matches = []
     for m, n in matches:
-        if m.distance < 0.75 * n.distance:
+        if m.distance < 0.85 * n.distance:
             good_matches.append(m)
     return good_matches
 
